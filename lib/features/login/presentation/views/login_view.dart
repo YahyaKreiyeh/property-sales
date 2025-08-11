@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:property_sales/core/constants/constants.dart';
+import 'package:property_sales/core/constants/enums.dart';
 import 'package:property_sales/core/helpers/spacing.dart';
 import 'package:property_sales/core/models/country.dart';
 import 'package:property_sales/core/models/result.dart';
 import 'package:property_sales/core/routing/routes.dart';
+import 'package:property_sales/core/routing/routes_extension.dart';
 import 'package:property_sales/core/style/assets/assets.gen.dart';
 import 'package:property_sales/core/themes/app_colors.dart';
 import 'package:property_sales/core/themes/text_styles.dart';
@@ -14,6 +15,7 @@ import 'package:property_sales/core/widgets/buttons/primary_button.dart';
 import 'package:property_sales/core/widgets/text_fields/custom_text_field.dart';
 import 'package:property_sales/features/login/presentation/cubit/login_cubit.dart';
 import 'package:property_sales/features/login/presentation/cubit/login_state.dart';
+import 'package:property_sales/features/snackbar/bloc/snackbar_bloc.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -103,20 +105,27 @@ class _LoginBlocListener extends StatelessWidget {
       listener: (context, state) {
         state.status.when(
           success: (_) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Login successful')));
-            context.goNamed(Routes.home);
+            context.read<SnackbarBloc>().add(
+              AddSnackbarEvent(
+                message: 'Login successful',
+                type: SnackbarType.success,
+              ),
+            );
+            context.pushNamed(Routes.home);
           },
           failure: (_, _, msg) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(msg ?? 'Login failed')));
+            context.read<SnackbarBloc>().add(
+              AddSnackbarEvent(
+                message: msg ?? 'Login failed',
+                type: SnackbarType.error,
+              ),
+            );
           },
           loading: () {},
           empty: () {},
         );
       },
+
       child: const SizedBox.shrink(),
     );
   }
