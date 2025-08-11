@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   AppColors._();
-  static const primary = Color(0xFFF5961C);
+  static const primary = Color(0xFFDBAA4B);
   static const secondary = Color(0xFFFFEED7);
   static const lightOrange = Color(0xFFFDEDDB);
   static const lighterOrange = Color(0xFFFFFBF7);
@@ -66,7 +66,7 @@ class AppColors {
   static const shimmerHighlightColor = Color(0xFFF5F5F5);
 
   // Input
-  static const inputBorderGrey = Color(0xffE2E5F2);
+  static const inputBorderGrey = Color(0xffDDDDDD);
   static const inputFillWhite = Color(0xffFFFFFF);
 
   // Buttons

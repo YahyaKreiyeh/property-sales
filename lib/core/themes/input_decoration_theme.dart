@@ -14,7 +14,7 @@ InputDecorationTheme inputDecorationTheme() => InputDecorationTheme(
   ),
   errorBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(8),
-    borderSide: const BorderSide(color: AppColors.inputBorderGrey),
+    borderSide: const BorderSide(color: AppColors.redText),
   ),
   contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
   hintStyle: TextStyles.secondaryText40015,

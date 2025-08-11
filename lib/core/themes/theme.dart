@@ -13,9 +13,9 @@ import 'package:property_sales/core/themes/popupmenu_theme.dart';
 import 'package:property_sales/core/themes/text_theme.dart';
 
 ThemeData getTheme() => ThemeData(
-  canvasColor: AppColors.greyShade300,
+  canvasColor: AppColors.white,
   appBarTheme: appBarTheme(),
-  scaffoldBackgroundColor: AppColors.scaffoldBackground,
+  scaffoldBackgroundColor: AppColors.white,
   primaryColor: AppColors.primary,
   primaryColorLight: AppColors.primary.withAlpha((0.1 * 255).toInt()),
   colorScheme: colorScheme(),

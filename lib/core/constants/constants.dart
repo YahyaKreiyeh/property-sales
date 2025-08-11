@@ -4,3 +4,7 @@ const horizontalPadding = 16.0;
 const radius = 8.0;
 const appBarHeight = 64.0;
 const propertySales = 'Property Sales';
+
+class SharedPrefKeys {
+  static const String userToken = 'userToken';
+}
