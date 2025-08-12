@@ -9,8 +9,6 @@ import 'package:property_sales/features/login/presentation/views/login_view.dart
 
 class AppRouter {
   static Route? generateRoute(RouteSettings settings) {
-    final arguments = settings.arguments;
-
     switch (settings.name) {
       case Routes.home:
         return MaterialPageRoute(

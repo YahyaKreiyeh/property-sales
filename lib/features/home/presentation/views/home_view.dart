@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:property_sales/core/constants/constants.dart';
 import 'package:property_sales/core/helpers/formatters.dart';
 import 'package:property_sales/core/helpers/spacing.dart';
@@ -187,6 +188,8 @@ class _ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formatter = NumberFormat.compact();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -215,20 +218,19 @@ class _ProductCard extends StatelessWidget {
                     color: AppColors.grey,
                   ),
                   const HorizontalSpace(6),
-                  //TODO: adjust this to display view count
-                  //TODO: round numbers like youtube and facebook
                   Expanded(
                     child: Text(
-                      '${item.review.review} views',
+                      '${formatter.format(item.viewCount)} views',
                       style: TextStyles.greyText40015,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
                   ),
                   const Spacer(),
-                  // TODO: implement favorite functionality
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // TODO: implement favorite functionality
+                    },
                     icon: const Icon(
                       Icons.favorite_border,
                       color: AppColors.grey,

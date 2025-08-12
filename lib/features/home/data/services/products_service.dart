@@ -1,6 +1,5 @@
-// lib/features/home/data/services/products_service.dart
 import 'package:dio/dio.dart';
-import 'package:property_sales/features/home/data/models/product_dto.dart'; // <-- import DTO
+import 'package:property_sales/features/home/data/models/product_dto.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'products_service.g.dart';

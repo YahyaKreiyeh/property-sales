@@ -9,11 +9,15 @@ class SearchProductsUseCase
   const SearchProductsUseCase(this.repository);
 
   @override
-  Future<Result<ProductPage>> call(SearchProductsParams params) {
+  Future<Result<ProductPage>> call(SearchProductsParams params) async {
+    final cleanSearchTerm = params.searchTerm.trim();
+
     return repository.search(
-      searchTerm: params.searchTerm,
-      page: params.page,
-      limit: params.limit,
+      SearchProductsParams(
+        searchTerm: cleanSearchTerm,
+        page: params.page,
+        limit: params.limit,
+      ),
     );
   }
 }
