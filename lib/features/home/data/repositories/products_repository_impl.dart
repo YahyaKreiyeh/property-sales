@@ -6,8 +6,7 @@ import 'package:property_sales/features/home/data/models/product_dto.dart';
 import 'package:property_sales/features/home/domain/entites/category_entity.dart';
 import 'package:property_sales/features/home/domain/entites/product_entity.dart';
 import 'package:property_sales/features/home/domain/repositories/products_repository.dart';
-import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart'
-    show SearchProductsParams;
+import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart';
 
 class ProductsRepositoryImpl implements ProductsRepository {
   final ProductsRemoteDataSource _remote;

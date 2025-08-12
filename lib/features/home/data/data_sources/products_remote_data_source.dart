@@ -4,8 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:property_sales/features/home/data/models/category_dto.dart';
 import 'package:property_sales/features/home/data/models/product_dto.dart';
 import 'package:property_sales/features/home/data/services/products_service.dart';
-import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart'
-    show SearchProductsParams;
+import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart';
 
 abstract class ProductsRemoteDataSource {
   Future<ProductPageDto> search(SearchProductsParams params);
