@@ -48,6 +48,11 @@ class TextStyles {
     fontWeight: FontWeight.w400,
     color: AppColors.primaryText,
   );
+  static TextStyle greyText40015 = const TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+    color: AppColors.greyText,
+  );
 
   static TextStyle primaryText50015 = const TextStyle(
     fontSize: 15,
@@ -163,6 +168,17 @@ class TextStyles {
   static TextStyle primaryText50020 = const TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w500,
+    color: AppColors.primaryText,
+  );
+  static TextStyle primaryText40020 = const TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w400,
+    color: AppColors.primaryText,
+  );
+
+  static TextStyle primaryText40022 = const TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.w400,
     color: AppColors.primaryText,
   );
   static TextStyle primaryText60020 = const TextStyle(

@@ -39,6 +39,7 @@ class AppColors {
   static const whiteText = Color(0xFFFFFFFF);
   static const redText = Color(0xFFC42020);
   static const textfieldLabel = Color(0xFF808DA4);
+  static const greyText = Color(0xFF9E9E9E);
 
   // Bottom Navigation Bar
   static const bottomNavBarHighLight = Color(0x1FFFFFFF);

@@ -1,29 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:property_sales/core/models/result.dart';
 import 'package:property_sales/features/home/domain/entites/product_entity.dart';
-import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart';
+import 'package:property_sales/features/home/domain/repositories/products_repository.dart';
 
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  final SearchProductsUseCase _useCase;
-  HomeCubit(this._useCase) : super(const HomeState());
+  final ProductsRepository _repo;
 
-  void searchChanged(String term) {
-    emit(state.copyWith(searchTerm: term));
+  HomeCubit(this._repo) : super(const HomeState()) {
+    fetchInitial();
   }
 
-  Future<void> submitSearch() async {
-    final q = state.searchTerm.trim();
-    if (q.isEmpty) {
-      emit(state.copyWith(items: const [], page: 1, totalPages: 0));
-      return;
-    }
-    emit(state.copyWith(status: const Result.loading(), page: 1));
+  void searchChanged(String term) => emit(state.copyWith(searchTerm: term));
 
-    final res = await _useCase(
-      SearchProductsParams(searchTerm: q, page: 1, limit: state.limit),
-    );
+  Future<void> fetchInitial() async {
+    emit(state.copyWith(status: const Result.loading(), page: 1));
+    final res = await _repo.search(searchTerm: '', page: 1, limit: state.limit);
 
     res.when(
       success: (pageData) {
@@ -33,7 +26,64 @@ class HomeCubit extends Cubit<HomeState> {
             items: pageData.data,
             page: 1,
             totalPages: pageData.totalPages,
+            totalLength: pageData.length,
             errorMessage: null,
+          ),
+        );
+      },
+      empty: () {
+        emit(
+          state.copyWith(
+            status: const Result.success(data: []),
+            items: const [],
+            page: 1,
+            totalPages: 0,
+            totalLength: 0,
+          ),
+        );
+      },
+      failure: (err, _, msg) {
+        emit(
+          state.copyWith(
+            status: Result.failure(error: err, errorMessage: msg),
+            errorMessage: msg ?? 'Failed to load products',
+          ),
+        );
+      },
+      loading: () {},
+    );
+  }
+
+  Future<void> submitSearch() async {
+    final q = state.searchTerm.trim();
+    if (q.isEmpty) {
+      return fetchInitial();
+    }
+
+    emit(state.copyWith(status: const Result.loading(), page: 1));
+    final res = await _repo.search(searchTerm: q, page: 1, limit: state.limit);
+
+    res.when(
+      success: (pageData) {
+        emit(
+          state.copyWith(
+            status: const Result.success(data: []),
+            items: pageData.data,
+            page: 1,
+            totalPages: pageData.totalPages,
+            totalLength: pageData.length,
+            errorMessage: null,
+          ),
+        );
+      },
+      empty: () {
+        emit(
+          state.copyWith(
+            status: const Result.success(data: []),
+            items: const [],
+            page: 1,
+            totalPages: 0,
+            totalLength: 0,
           ),
         );
       },
@@ -46,33 +96,20 @@ class HomeCubit extends Cubit<HomeState> {
         );
       },
       loading: () {},
-      empty: () {
-        emit(
-          state.copyWith(
-            status: const Result.success(data: []),
-            items: const [],
-            page: 1,
-            totalPages: 0,
-          ),
-        );
-      },
     );
   }
 
   Future<void> loadMoreIfPossible() async {
     if (state.isLoadingMore) return;
     if (state.page >= state.totalPages) return;
-    if (state.searchTerm.trim().isEmpty) return;
 
     emit(state.copyWith(isLoadingMore: true));
     final next = state.page + 1;
 
-    final res = await _useCase(
-      SearchProductsParams(
-        searchTerm: state.searchTerm.trim(),
-        page: next,
-        limit: state.limit,
-      ),
+    final res = await _repo.search(
+      searchTerm: state.searchTerm.trim(),
+      page: next,
+      limit: state.limit,
     );
 
     res.when(
@@ -84,17 +121,15 @@ class HomeCubit extends Cubit<HomeState> {
             items: merged,
             page: next,
             totalPages: pageData.totalPages,
+            totalLength: pageData.length,
             isLoadingMore: false,
           ),
         );
       },
-      failure: (err, _, msg) {
-        emit(state.copyWith(isLoadingMore: false, errorMessage: msg));
-      },
+      empty: () => emit(state.copyWith(isLoadingMore: false)),
+      failure: (err, _, msg) =>
+          emit(state.copyWith(isLoadingMore: false, errorMessage: msg)),
       loading: () {},
-      empty: () {
-        emit(state.copyWith(isLoadingMore: false));
-      },
     );
   }
 }

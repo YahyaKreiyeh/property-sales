@@ -26,6 +26,7 @@ class CustomTextField extends StatelessWidget {
   final Function(PointerDownEvent)? onTapOutside;
   final List<TextInputFormatter>? inputFormatters;
   final BoxConstraints? prefixIconConstraints;
+  final TextStyle? textStyle;
 
   const CustomTextField({
     this.initialValue,
@@ -50,6 +51,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLength,
     this.inputFormatters,
     this.prefixIconConstraints,
+    this.textStyle,
   });
 
   @override
@@ -70,7 +72,7 @@ class CustomTextField extends StatelessWidget {
         onTapOutside:
             onTapOutside ??
             (_) => FocusScope.of(context).requestFocus(FocusNode()),
-
+        style: textStyle,
         keyboardType: keyboardType,
         maxLines: maxLines,
         onEditingComplete: onEditingComplete,

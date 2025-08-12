@@ -4,6 +4,9 @@ const horizontalPadding = 16.0;
 const radius = 8.0;
 const appBarHeight = 64.0;
 const propertySales = 'Property Sales';
+const longTextTest =
+    'This is a long text This is a long text This is a long text This is a long text This is a long text';
+const shortTextTest = 'a';
 bool isLoggedInUser = false;
 
 class SharedPrefKeys {

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:property_sales/core/constants/constants.dart';
+import 'package:property_sales/core/helpers/formatters.dart';
 import 'package:property_sales/core/helpers/spacing.dart';
 import 'package:property_sales/core/models/result.dart';
 import 'package:property_sales/core/style/assets/assets.gen.dart';
 import 'package:property_sales/core/themes/app_colors.dart';
+import 'package:property_sales/core/themes/text_styles.dart';
 import 'package:property_sales/core/widgets/text_fields/custom_text_field.dart';
 import 'package:property_sales/features/home/domain/entites/product_entity.dart';
 import 'package:property_sales/features/home/presentation/cubit/home_cubit.dart';
@@ -49,29 +51,13 @@ class _Body extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const VerticalSpace(16),
-          _SearchBox(),
-          const VerticalSpace(16),
-          _ResultsHeader(),
-          const VerticalSpace(8),
-          // const _SortRow(),
-          // const VerticalSpace(8),
-
-          // Scrollable area
-          const Expanded(child: _ProductsList()),
-          const VerticalSpace(16),
-        ],
+        children: [_SearchBox(), _ResultsHeader(), _SortRow(), _ProductsList()],
       ),
     );
   }
 }
 
-/* --------------------------- PRODUCTS LIST --------------------------- */
-
 class _ProductsList extends StatelessWidget {
-  const _ProductsList();
-
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<HomeCubit>();
@@ -81,130 +67,120 @@ class _ProductsList extends StatelessWidget {
       (HomeCubit c) => c.state.isLoadingMore,
     );
     final searchTerm = context.select((HomeCubit c) => c.state.searchTerm);
-
     final isInitialLoading = status.maybeWhen(
       loading: () => true,
       orElse: () => false,
     );
 
-    // Show fixed-height states inside Expanded
+    Widget child;
     if (isInitialLoading && items.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (items.isEmpty && searchTerm.isNotEmpty) {
-      return const Center(child: Text('No results'));
+      child = const Center(child: CircularProgressIndicator());
+    } else if (items.isEmpty && searchTerm.isNotEmpty) {
+      child = const Center(child: Text('No results'));
+    } else {
+      child = NotificationListener<ScrollNotification>(
+        onNotification: (n) {
+          if (n.metrics.pixels >= n.metrics.maxScrollExtent - 400) {
+            cubit.loadMoreIfPossible();
+          }
+          return false;
+        },
+        child: ListView.separated(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          itemCount: items.length + (isLoadingMore ? 1 : 0),
+          separatorBuilder: (_, _) => const VerticalSpace(16),
+          itemBuilder: (context, index) {
+            if (index >= items.length) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+            final p = items[index];
+            return _ProductCard(item: p);
+          },
+        ),
+      );
     }
 
-    return NotificationListener<ScrollNotification>(
-      onNotification: (n) {
-        if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
-          cubit.loadMoreIfPossible();
-        }
-        return false;
-      },
-      child: ListView.separated(
-        padding: EdgeInsets.zero,
-        itemCount: items.length + (isLoadingMore ? 1 : 0),
-        separatorBuilder: (_, __) =>
-            const SizedBox(height: 16), // space between cards (like the mock)
-        itemBuilder: (context, index) {
-          if (index >= items.length) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Center(child: CircularProgressIndicator()),
-            );
-          }
-          final p = items[index];
-          return _ProductCard(item: p);
-        },
-      ),
-    );
+    return Expanded(child: child);
   }
 }
-
-/* ------------------------ HEADER + SORT (fixed) ----------------------- */
 
 class _ResultsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final count = context.select((HomeCubit c) => c.state.items.length);
-    return Row(
+    final total = context.select((HomeCubit c) => c.state.totalLength);
+    final searchTerm = context.select((HomeCubit c) => c.state.searchTerm);
+    return Column(
       children: [
-        Expanded(
-          child: RichText(
-            text: TextSpan(
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(color: AppColors.primaryText),
-              children: [
-                const TextSpan(text: 'Results for '),
-                const TextSpan(
-                  text: 'Apartment',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+        Row(
+          children: [
+            Expanded(
+              child: RichText(
+                text: TextSpan(
+                  style: TextStyles.primaryText40020,
+                  children: [
+                    TextSpan(
+                      text: 'Results${searchTerm.isNotEmpty ? ' for ' : ''}',
+                    ),
+                    if (searchTerm.isNotEmpty)
+                      TextSpan(
+                        text: searchTerm,
+                        style: TextStyles.primaryText60020,
+                      ),
+                    TextSpan(text: ' ($total)'),
+                  ],
                 ),
-                TextSpan(text: ' ($count)'),
-              ],
+              ),
             ),
-          ),
+            Icon(Icons.filter_alt_outlined, color: AppColors.primary),
+          ],
         ),
-        IconButton(
-          icon: const Icon(Icons.tune, color: AppColors.primaryText),
-          onPressed: () {},
-        ),
+        const VerticalSpace(16),
       ],
     );
   }
 }
 
-// class _SortRow extends StatelessWidget {
-//   const _SortRow();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final sort = context.select(
-//       (HomeCubit c) => c.state.sortLabel ?? 'Relevant',
-//     );
-//     return Row(
-//       children: [
-//         const Text('Sort by '),
-//         DropdownButton<String>(
-//           value: sort,
-//           underline: const SizedBox.shrink(),
-//           onChanged: (v) =>
-//               context.read<HomeCubit>().changeSort(v ?? 'Relevant'),
-//           items: const [
-//             DropdownMenuItem(value: 'Relevant', child: Text('Relevant')),
-//             DropdownMenuItem(value: 'Newest', child: Text('Newest')),
-//             DropdownMenuItem(
-//               value: 'Price: Low to High',
-//               child: Text('Price: Low to High'),
-//             ),
-//             DropdownMenuItem(
-//               value: 'Price: High to Low',
-//               child: Text('Price: High to Low'),
-//             ),
-//           ],
-//         ),
-//       ],
-//     );
-//   }
-// }
+class _SortRow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            const Text('Sort by '),
+            Text('Relevant ', style: TextStyles.primaryText60017),
+            Icon(Icons.keyboard_arrow_down, size: 18),
+          ],
+        ),
+        VerticalSpace(4),
+      ],
+    );
+  }
+}
 
 class _SearchBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<HomeCubit>();
-    return CustomTextField(
-      hintText: 'Search',
-      onChanged: cubit.searchChanged,
-      onEditingComplete: cubit.submitSearch,
-      onTapOutside: (_) => FocusScope.of(context).unfocus(),
-      suffixIcon: const Icon(Icons.search, color: AppColors.primary),
+    return Column(
+      children: [
+        const VerticalSpace(16),
+        CustomTextField(
+          hintText: 'Search',
+          textStyle: TextStyles.primaryText60017,
+          onChanged: cubit.searchChanged,
+          onEditingComplete: cubit.submitSearch,
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
+          suffixIcon: const Icon(Icons.search, color: AppColors.primary),
+        ),
+        const VerticalSpace(16),
+      ],
     );
   }
 }
-
-/* ---------------------------- PRODUCT CARD --------------------------- */
 
 class _ProductCard extends StatelessWidget {
   const _ProductCard({required this.item});
@@ -212,75 +188,84 @@ class _ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: () {},
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColors.inputBorderGrey),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
-              child: AspectRatio(
-                aspectRatio: 16 / 10,
-                child: Image.network(
-                  item.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
-                      const Center(child: Icon(Icons.image_not_supported)),
-                ),
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(12)),
+          child: AspectRatio(
+            aspectRatio: 16 / 10,
+            child: Image.network(
+              item.imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) =>
+                  const Center(child: Icon(Icons.image_not_supported)),
             ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.remove_red_eye_outlined,
-                        size: 18,
-                        color: AppColors.grey,
-                      ),
-                      const HorizontalSpace(6),
-                      Text(
-                        '${item.review.review} views',
-                        style: const TextStyle(color: AppColors.grey),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.favorite_border),
-                        splashRadius: 20,
-                      ),
-                    ],
+                  const Icon(
+                    Icons.remove_red_eye_outlined,
+                    size: 25,
+                    color: AppColors.grey,
                   ),
-                  const VerticalSpace(4),
-                  Text(
-                    '${item.newPrice.toStringAsFixed(0)} ${item.priceCurrency}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                  const HorizontalSpace(6),
+                  //TODO: adjust this to display view count
+                  //TODO: round numbers like youtube and facebook
+                  Expanded(
+                    child: Text(
+                      '${item.review.review} views',
+                      style: TextStyles.greyText40015,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ),
-                  const VerticalSpace(4),
-                  Text(
-                    'More than 6 bedrooms · 2 Bathroom · 120 m2', // map your fields as needed
-                    style: const TextStyle(color: AppColors.grey),
+                  const Spacer(),
+                  // TODO: implement favorite functionality
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.favorite_border,
+                      color: AppColors.grey,
+                    ),
+                    splashRadius: 20,
                   ),
                 ],
               ),
-            ),
-          ],
+              const VerticalSpace(4),
+              RichText(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: AppFormatter.formatPrice(item.newPrice),
+                      style: TextStyles.primaryText70022,
+                    ),
+                    TextSpan(
+                      text: ' ${item.priceCurrency}',
+                      style: TextStyles.primaryText40022,
+                    ),
+                  ],
+                ),
+              ),
+              const VerticalSpace(4),
+              Text(
+                'More than 6 bedrooms · 2 Bathroom · 120 m2',
+                style: TextStyles.greyText40015,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
