@@ -11,6 +11,8 @@ import 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
   final ProductsRepository _repo;
   Timer? _debounce;
+  // _reqId to cancel older requests, if we have used bloc we can apply it using transformers
+  // but it's not available in cubit so this is a manuall implementation for it
   int _reqId = 0;
 
   HomeCubit(this._repo) : super(const HomeState()) {
