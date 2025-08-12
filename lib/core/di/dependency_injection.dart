@@ -1,9 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:property_sales/core/networking/dio_factory.dart';
+import 'package:property_sales/features/home/data/data_sources/favorite_remote_data_source.dart';
 import 'package:property_sales/features/home/data/data_sources/products_remote_data_source.dart';
+import 'package:property_sales/features/home/data/repositories/favorite_repository_impl.dart';
 import 'package:property_sales/features/home/data/repositories/products_repository_impl.dart';
+import 'package:property_sales/features/home/data/services/favorite_service.dart';
 import 'package:property_sales/features/home/data/services/products_service.dart';
+import 'package:property_sales/features/home/domain/repositories/favorite_repository.dart';
 import 'package:property_sales/features/home/domain/repositories/products_repository.dart';
 import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart';
 import 'package:property_sales/features/home/presentation/cubit/home_cubit.dart';
@@ -44,5 +48,14 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<SearchProductsUseCase>(
     () => SearchProductsUseCase(getIt()),
   );
-  getIt.registerFactory<HomeCubit>(() => HomeCubit(getIt()));
+  getIt.registerFactory<HomeCubit>(() => HomeCubit(getIt(), getIt()));
+
+  // Favorites
+  getIt.registerLazySingleton<FavoriteService>(() => FavoriteService(getIt()));
+  getIt.registerLazySingleton<FavoriteRemoteDataSource>(
+    () => FavoriteRemoteDataSourceImpl(getIt()),
+  );
+  getIt.registerLazySingleton<FavoriteRepository>(
+    () => FavoriteRepositoryImpl(getIt()),
+  );
 }

@@ -24,7 +24,6 @@ class DioFactory {
     );
     _dio?.options.headers = {
       'content-type': 'application/json',
-      'accept': 'application/json',
       'Accept-Language': 'ar_SY',
       'Authorization': token,
     };

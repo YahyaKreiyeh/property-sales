@@ -4,8 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:property_sales/core/constants/constants.dart';
 import 'package:property_sales/core/constants/enums.dart';
 import 'package:property_sales/core/helpers/formatters.dart';
+import 'package:property_sales/core/helpers/shared_pref_helper.dart';
 import 'package:property_sales/core/helpers/spacing.dart';
 import 'package:property_sales/core/models/result.dart';
+import 'package:property_sales/core/routing/routes.dart';
+import 'package:property_sales/core/routing/routes_extension.dart';
 import 'package:property_sales/core/style/assets/assets.gen.dart';
 import 'package:property_sales/core/themes/app_colors.dart';
 import 'package:property_sales/core/themes/text_styles.dart';
@@ -28,8 +31,8 @@ class HomeView extends StatelessWidget {
           height: kToolbarHeight - 10,
           child: Assets.images.appIcon.image(fit: BoxFit.contain),
         ),
-        actions: const [
-          Badge(
+        actions: [
+          const Badge(
             label: Text('3', style: TextStyle(color: AppColors.whiteText)),
             child: Icon(
               Icons.notifications_outlined,
@@ -37,11 +40,17 @@ class HomeView extends StatelessWidget {
               size: 30,
             ),
           ),
-          HorizontalSpace(12),
-          Icon(Icons.menu, color: AppColors.grey, size: 30),
-          HorizontalSpace(8),
+          const HorizontalSpace(12),
+          Builder(
+            builder: (context) => GestureDetector(
+              onTap: () => Scaffold.of(context).openEndDrawer(),
+              child: const Icon(Icons.menu, color: AppColors.grey, size: 30),
+            ),
+          ),
+          const HorizontalSpace(8),
         ],
       ),
+      endDrawer: const _HomeDrawer(),
       body: const _Body(),
     );
   }
@@ -311,12 +320,11 @@ class _ProductCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   IconButton(
-                    onPressed: () {
-                      // TODO: implement favorite functionality
-                    },
-                    icon: const Icon(
-                      Icons.favorite_border,
-                      color: AppColors.grey,
+                    onPressed: () =>
+                        context.read<HomeCubit>().toggleFavorite(item.id),
+                    icon: Icon(
+                      item.isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: item.isFavorite ? Colors.red : AppColors.grey,
                     ),
                     splashRadius: 20,
                   ),
@@ -415,5 +423,41 @@ class _ErrorRetry extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _HomeDrawer extends StatelessWidget {
+  const _HomeDrawer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      backgroundColor: AppColors.white,
+      child: Column(
+        children: [
+          DrawerHeader(child: Assets.images.appIcon.image(fit: BoxFit.contain)),
+          const Spacer(),
+          ListTile(
+            leading: const Icon(Icons.logout, color: AppColors.grey),
+            title: Text('Logout', style: TextStyles.primaryText60017),
+            onTap: () => _handleLogout(context),
+          ),
+          const VerticalSpace(16),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleLogout(BuildContext context) async {
+    context.pop();
+
+    await SharedPrefHelper.clearAllSecuredData();
+
+    if (context.mounted) {
+      context.pushNamedAndRemoveUntil(
+        Routes.login,
+        predicate: (route) => false,
+      );
+    }
   }
 }

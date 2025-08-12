@@ -5,6 +5,7 @@ import 'package:property_sales/core/mixins/cubit_mixin.dart';
 import 'package:property_sales/core/models/result.dart';
 import 'package:property_sales/features/home/domain/entites/filter_entity.dart';
 import 'package:property_sales/features/home/domain/entites/product_entity.dart';
+import 'package:property_sales/features/home/domain/repositories/favorite_repository.dart';
 import 'package:property_sales/features/home/domain/repositories/products_repository.dart';
 import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart';
 
@@ -12,10 +13,11 @@ import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
   final ProductsRepository _repo;
+  final FavoriteRepository _favoriteRepo;
   Timer? _debounce;
   int _reqId = 0;
 
-  HomeCubit(this._repo) : super(const HomeState()) {
+  HomeCubit(this._repo, this._favoriteRepo) : super(const HomeState()) {
     search(term: '');
   }
 
@@ -132,6 +134,41 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
       ),
     );
     search();
+  }
+
+  Future<void> toggleFavorite(int productId) async {
+    final productIndex = state.items.indexWhere((item) => item.id == productId);
+    if (productIndex == -1) return;
+
+    final product = state.items[productIndex];
+    final newFavoriteStatus = !product.isFavorite;
+
+    final updatedItems = List<ProductEntity>.from(state.items);
+    updatedItems[productIndex] = product.copyWith(
+      isFavorite: newFavoriteStatus,
+    );
+    safeEmit(state.copyWith(items: updatedItems));
+
+    final result = product.isFavorite
+        ? await _favoriteRepo.removeFromFavorite(productId)
+        : await _favoriteRepo.addToFavorite(productId);
+
+    result.when(
+      success: (favoriteResult) {
+        if (!favoriteResult.success) {
+          final revertedItems = List<ProductEntity>.from(state.items);
+          revertedItems[productIndex] = product;
+          safeEmit(state.copyWith(items: revertedItems));
+        }
+      },
+      failure: (error, _, errorMessage) {
+        final revertedItems = List<ProductEntity>.from(state.items);
+        revertedItems[productIndex] = product;
+        safeEmit(state.copyWith(items: revertedItems));
+      },
+      loading: () {},
+      empty: () {},
+    );
   }
 
   Future<void> search({String? term}) async {

@@ -3,6 +3,7 @@ class ApiConstants {
 
   static const String products = '/search/products';
   static const String categories = '/categories/main';
+  static const String favorite = '/favorite_';
 }
 
 class ApiErrors {
