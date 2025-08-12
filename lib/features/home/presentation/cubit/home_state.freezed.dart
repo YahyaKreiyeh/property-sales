@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HomeState {
 
- Result<ProductPage> get status; Result<List<CategoryEntity>> get categoriesStatus; String get searchTerm; int get page; int get limit; List<ProductEntity> get items; List<CategoryEntity> get categories; bool get isLoadingMore; String? get loadMoreError; FilterEntity get currentFilter; FilterEntity get filterDraft; String? get selectedCity;
+ Result<ProductPage> get status; Result<CategoryPage> get categoriesStatus; String get searchTerm; int get page; int get limit; List<ProductEntity> get items; List<CategoryEntity> get categories; bool get isLoadingMore; String? get loadMoreError; FilterEntity get currentFilter; FilterEntity get filterDraft; String? get selectedCity;
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,11 +45,11 @@ abstract mixin class $HomeStateCopyWith<$Res>  {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) _then) = _$HomeStateCopyWithImpl;
 @useResult
 $Res call({
- Result<ProductPage> status, Result<List<CategoryEntity>> categoriesStatus, String searchTerm, int page, int limit, List<ProductEntity> items, List<CategoryEntity> categories, bool isLoadingMore, String? loadMoreError, FilterEntity currentFilter, FilterEntity filterDraft, String? selectedCity
+ Result<ProductPage> status, Result<CategoryPage> categoriesStatus, String searchTerm, int page, int limit, List<ProductEntity> items, List<CategoryEntity> categories, bool isLoadingMore, String? loadMoreError, FilterEntity currentFilter, FilterEntity filterDraft, String? selectedCity
 });
 
 
-$ResultCopyWith<ProductPage, $Res> get status;$ResultCopyWith<List<CategoryEntity>, $Res> get categoriesStatus;$FilterEntityCopyWith<$Res> get currentFilter;$FilterEntityCopyWith<$Res> get filterDraft;
+$ResultCopyWith<ProductPage, $Res> get status;$ResultCopyWith<CategoryPage, $Res> get categoriesStatus;$FilterEntityCopyWith<$Res> get currentFilter;$FilterEntityCopyWith<$Res> get filterDraft;
 
 }
 /// @nodoc
@@ -66,7 +66,7 @@ class _$HomeStateCopyWithImpl<$Res>
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as Result<ProductPage>,categoriesStatus: null == categoriesStatus ? _self.categoriesStatus : categoriesStatus // ignore: cast_nullable_to_non_nullable
-as Result<List<CategoryEntity>>,searchTerm: null == searchTerm ? _self.searchTerm : searchTerm // ignore: cast_nullable_to_non_nullable
+as Result<CategoryPage>,searchTerm: null == searchTerm ? _self.searchTerm : searchTerm // ignore: cast_nullable_to_non_nullable
 as String,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
 as int,limit: null == limit ? _self.limit : limit // ignore: cast_nullable_to_non_nullable
 as int,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
@@ -92,9 +92,9 @@ $ResultCopyWith<ProductPage, $Res> get status {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ResultCopyWith<List<CategoryEntity>, $Res> get categoriesStatus {
+$ResultCopyWith<CategoryPage, $Res> get categoriesStatus {
   
-  return $ResultCopyWith<List<CategoryEntity>, $Res>(_self.categoriesStatus, (value) {
+  return $ResultCopyWith<CategoryPage, $Res>(_self.categoriesStatus, (value) {
     return _then(_self.copyWith(categoriesStatus: value));
   });
 }/// Create a copy of HomeState
@@ -197,7 +197,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Result<ProductPage> status,  Result<List<CategoryEntity>> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter,  FilterEntity filterDraft,  String? selectedCity)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Result<ProductPage> status,  Result<CategoryPage> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter,  FilterEntity filterDraft,  String? selectedCity)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
 return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,_that.limit,_that.items,_that.categories,_that.isLoadingMore,_that.loadMoreError,_that.currentFilter,_that.filterDraft,_that.selectedCity);case _:
@@ -218,7 +218,7 @@ return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Result<ProductPage> status,  Result<List<CategoryEntity>> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter,  FilterEntity filterDraft,  String? selectedCity)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Result<ProductPage> status,  Result<CategoryPage> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter,  FilterEntity filterDraft,  String? selectedCity)  $default,) {final _that = this;
 switch (_that) {
 case _HomeState():
 return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,_that.limit,_that.items,_that.categories,_that.isLoadingMore,_that.loadMoreError,_that.currentFilter,_that.filterDraft,_that.selectedCity);case _:
@@ -238,7 +238,7 @@ return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Result<ProductPage> status,  Result<List<CategoryEntity>> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter,  FilterEntity filterDraft,  String? selectedCity)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Result<ProductPage> status,  Result<CategoryPage> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter,  FilterEntity filterDraft,  String? selectedCity)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
 return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,_that.limit,_that.items,_that.categories,_that.isLoadingMore,_that.loadMoreError,_that.currentFilter,_that.filterDraft,_that.selectedCity);case _:
@@ -257,7 +257,7 @@ class _HomeState implements HomeState {
   
 
 @override@JsonKey() final  Result<ProductPage> status;
-@override@JsonKey() final  Result<List<CategoryEntity>> categoriesStatus;
+@override@JsonKey() final  Result<CategoryPage> categoriesStatus;
 @override@JsonKey() final  String searchTerm;
 @override@JsonKey() final  int page;
 @override@JsonKey() final  int limit;
@@ -311,11 +311,11 @@ abstract mixin class _$HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Re
   factory _$HomeStateCopyWith(_HomeState value, $Res Function(_HomeState) _then) = __$HomeStateCopyWithImpl;
 @override @useResult
 $Res call({
- Result<ProductPage> status, Result<List<CategoryEntity>> categoriesStatus, String searchTerm, int page, int limit, List<ProductEntity> items, List<CategoryEntity> categories, bool isLoadingMore, String? loadMoreError, FilterEntity currentFilter, FilterEntity filterDraft, String? selectedCity
+ Result<ProductPage> status, Result<CategoryPage> categoriesStatus, String searchTerm, int page, int limit, List<ProductEntity> items, List<CategoryEntity> categories, bool isLoadingMore, String? loadMoreError, FilterEntity currentFilter, FilterEntity filterDraft, String? selectedCity
 });
 
 
-@override $ResultCopyWith<ProductPage, $Res> get status;@override $ResultCopyWith<List<CategoryEntity>, $Res> get categoriesStatus;@override $FilterEntityCopyWith<$Res> get currentFilter;@override $FilterEntityCopyWith<$Res> get filterDraft;
+@override $ResultCopyWith<ProductPage, $Res> get status;@override $ResultCopyWith<CategoryPage, $Res> get categoriesStatus;@override $FilterEntityCopyWith<$Res> get currentFilter;@override $FilterEntityCopyWith<$Res> get filterDraft;
 
 }
 /// @nodoc
@@ -332,7 +332,7 @@ class __$HomeStateCopyWithImpl<$Res>
   return _then(_HomeState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as Result<ProductPage>,categoriesStatus: null == categoriesStatus ? _self.categoriesStatus : categoriesStatus // ignore: cast_nullable_to_non_nullable
-as Result<List<CategoryEntity>>,searchTerm: null == searchTerm ? _self.searchTerm : searchTerm // ignore: cast_nullable_to_non_nullable
+as Result<CategoryPage>,searchTerm: null == searchTerm ? _self.searchTerm : searchTerm // ignore: cast_nullable_to_non_nullable
 as String,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
 as int,limit: null == limit ? _self.limit : limit // ignore: cast_nullable_to_non_nullable
 as int,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
@@ -359,9 +359,9 @@ $ResultCopyWith<ProductPage, $Res> get status {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ResultCopyWith<List<CategoryEntity>, $Res> get categoriesStatus {
+$ResultCopyWith<CategoryPage, $Res> get categoriesStatus {
   
-  return $ResultCopyWith<List<CategoryEntity>, $Res>(_self.categoriesStatus, (value) {
+  return $ResultCopyWith<CategoryPage, $Res>(_self.categoriesStatus, (value) {
     return _then(_self.copyWith(categoriesStatus: value));
   });
 }/// Create a copy of HomeState

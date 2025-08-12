@@ -109,14 +109,14 @@ class _Categories extends StatelessWidget {
 class _CategoriesChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final categoriesStatus = context
-        .select<HomeCubit, Result<List<CategoryEntity>>>(
-          (cubit) => cubit.state.categoriesStatus,
-        );
+    final categoriesStatus = context.select<HomeCubit, Result<CategoryPage>>(
+      (cubit) => cubit.state.categoriesStatus,
+    );
 
     return categoriesStatus.when(
       loading: () => _CategoriesLoading(),
-      success: (categories) => _CategoriesGrid(categories: categories),
+      success: (categories) => _CategoriesGrid(categories: categories.data),
+
       failure: (error, _, errorMessage) =>
           _CategoriesError(errorMessage: errorMessage),
       empty: () => _CategoriesEmpty(),

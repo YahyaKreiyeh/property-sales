@@ -1,6 +1,7 @@
 import 'package:property_sales/core/models/result.dart';
 import 'package:property_sales/core/networking/api_error_handler.dart';
 import 'package:property_sales/features/home/data/data_sources/products_remote_data_source.dart';
+import 'package:property_sales/features/home/data/models/category_dto.dart';
 import 'package:property_sales/features/home/data/models/product_dto.dart';
 import 'package:property_sales/features/home/domain/entites/category_entity.dart';
 import 'package:property_sales/features/home/domain/entites/product_entity.dart';
@@ -40,10 +41,20 @@ class ProductsRepositoryImpl implements ProductsRepository {
   }
 
   @override
-  Future<Result<List<CategoryEntity>>> getCategories() async {
+  Future<Result<CategoryPage>> getCategories() async {
     try {
-      final categories = await _remote.getCategories();
-      return Result.success(data: categories);
+      final dto = await _remote.getCategories();
+      final page = dto.toDomain();
+      if (page.data.isEmpty) {
+        return Result.success(
+          data: page.copyWith(
+            length: 0,
+            totalPages: 0,
+            message: page.message ?? 'No categories found',
+          ),
+        );
+      }
+      return Result.success(data: page);
     } catch (error) {
       final apiError = ApiErrorHandler.handle(error);
       return Result.failure(

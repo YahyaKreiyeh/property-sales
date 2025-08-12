@@ -10,7 +10,7 @@ part 'home_state.freezed.dart';
 abstract class HomeState with _$HomeState {
   const factory HomeState({
     @Default(Result.empty()) Result<ProductPage> status,
-    @Default(Result.empty()) Result<List<CategoryEntity>> categoriesStatus,
+    @Default(Result.empty()) Result<CategoryPage> categoriesStatus,
     @Default('') String searchTerm,
     @Default(1) int page,
     @Default(10) int limit,

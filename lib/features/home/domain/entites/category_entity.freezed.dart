@@ -280,4 +280,282 @@ as String?,
 
 }
 
+
+/// @nodoc
+mixin _$CategoryPage {
+
+ List<CategoryEntity> get data; int get length;@JsonKey(name: 'total_pages') int get totalPages;@JsonKey(name: 'message') String? get message;
+/// Create a copy of CategoryPage
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CategoryPageCopyWith<CategoryPage> get copyWith => _$CategoryPageCopyWithImpl<CategoryPage>(this as CategoryPage, _$identity);
+
+  /// Serializes this CategoryPage to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoryPage&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.length, length) || other.length == length)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages)&&(identical(other.message, message) || other.message == message));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data),length,totalPages,message);
+
+@override
+String toString() {
+  return 'CategoryPage(data: $data, length: $length, totalPages: $totalPages, message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CategoryPageCopyWith<$Res>  {
+  factory $CategoryPageCopyWith(CategoryPage value, $Res Function(CategoryPage) _then) = _$CategoryPageCopyWithImpl;
+@useResult
+$Res call({
+ List<CategoryEntity> data, int length,@JsonKey(name: 'total_pages') int totalPages,@JsonKey(name: 'message') String? message
+});
+
+
+
+
+}
+/// @nodoc
+class _$CategoryPageCopyWithImpl<$Res>
+    implements $CategoryPageCopyWith<$Res> {
+  _$CategoryPageCopyWithImpl(this._self, this._then);
+
+  final CategoryPage _self;
+  final $Res Function(CategoryPage) _then;
+
+/// Create a copy of CategoryPage
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? data = null,Object? length = null,Object? totalPages = null,Object? message = freezed,}) {
+  return _then(_self.copyWith(
+data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
+as List<CategoryEntity>,length: null == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
+as int,totalPages: null == totalPages ? _self.totalPages : totalPages // ignore: cast_nullable_to_non_nullable
+as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [CategoryPage].
+extension CategoryPagePatterns on CategoryPage {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CategoryPage value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _CategoryPage() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CategoryPage value)  $default,){
+final _that = this;
+switch (_that) {
+case _CategoryPage():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CategoryPage value)?  $default,){
+final _that = this;
+switch (_that) {
+case _CategoryPage() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<CategoryEntity> data,  int length, @JsonKey(name: 'total_pages')  int totalPages, @JsonKey(name: 'message')  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _CategoryPage() when $default != null:
+return $default(_that.data,_that.length,_that.totalPages,_that.message);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<CategoryEntity> data,  int length, @JsonKey(name: 'total_pages')  int totalPages, @JsonKey(name: 'message')  String? message)  $default,) {final _that = this;
+switch (_that) {
+case _CategoryPage():
+return $default(_that.data,_that.length,_that.totalPages,_that.message);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<CategoryEntity> data,  int length, @JsonKey(name: 'total_pages')  int totalPages, @JsonKey(name: 'message')  String? message)?  $default,) {final _that = this;
+switch (_that) {
+case _CategoryPage() when $default != null:
+return $default(_that.data,_that.length,_that.totalPages,_that.message);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _CategoryPage implements CategoryPage {
+  const _CategoryPage({required final  List<CategoryEntity> data, this.length = 0, @JsonKey(name: 'total_pages') this.totalPages = 0, @JsonKey(name: 'message') this.message}): _data = data;
+  factory _CategoryPage.fromJson(Map<String, dynamic> json) => _$CategoryPageFromJson(json);
+
+ final  List<CategoryEntity> _data;
+@override List<CategoryEntity> get data {
+  if (_data is EqualUnmodifiableListView) return _data;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_data);
+}
+
+@override@JsonKey() final  int length;
+@override@JsonKey(name: 'total_pages') final  int totalPages;
+@override@JsonKey(name: 'message') final  String? message;
+
+/// Create a copy of CategoryPage
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CategoryPageCopyWith<_CategoryPage> get copyWith => __$CategoryPageCopyWithImpl<_CategoryPage>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$CategoryPageToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CategoryPage&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.length, length) || other.length == length)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages)&&(identical(other.message, message) || other.message == message));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),length,totalPages,message);
+
+@override
+String toString() {
+  return 'CategoryPage(data: $data, length: $length, totalPages: $totalPages, message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$CategoryPageCopyWith<$Res> implements $CategoryPageCopyWith<$Res> {
+  factory _$CategoryPageCopyWith(_CategoryPage value, $Res Function(_CategoryPage) _then) = __$CategoryPageCopyWithImpl;
+@override @useResult
+$Res call({
+ List<CategoryEntity> data, int length,@JsonKey(name: 'total_pages') int totalPages,@JsonKey(name: 'message') String? message
+});
+
+
+
+
+}
+/// @nodoc
+class __$CategoryPageCopyWithImpl<$Res>
+    implements _$CategoryPageCopyWith<$Res> {
+  __$CategoryPageCopyWithImpl(this._self, this._then);
+
+  final _CategoryPage _self;
+  final $Res Function(_CategoryPage) _then;
+
+/// Create a copy of CategoryPage
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? data = null,Object? length = null,Object? totalPages = null,Object? message = freezed,}) {
+  return _then(_CategoryPage(
+data: null == data ? _self._data : data // ignore: cast_nullable_to_non_nullable
+as List<CategoryEntity>,length: null == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
+as int,totalPages: null == totalPages ? _self.totalPages : totalPages // ignore: cast_nullable_to_non_nullable
+as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
 // dart format on

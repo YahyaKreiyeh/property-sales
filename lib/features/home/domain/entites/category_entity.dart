@@ -14,3 +14,16 @@ abstract class CategoryEntity with _$CategoryEntity {
   factory CategoryEntity.fromJson(Map<String, dynamic> json) =>
       _$CategoryEntityFromJson(json);
 }
+
+@freezed
+abstract class CategoryPage with _$CategoryPage {
+  const factory CategoryPage({
+    required List<CategoryEntity> data,
+    @Default(0) int length,
+    @JsonKey(name: 'total_pages') @Default(0) int totalPages,
+    @JsonKey(name: 'message') String? message,
+  }) = _CategoryPage;
+
+  factory CategoryPage.fromJson(Map<String, dynamic> json) =>
+      _$CategoryPageFromJson(json);
+}

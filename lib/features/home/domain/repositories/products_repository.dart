@@ -6,5 +6,5 @@ import 'package:property_sales/features/home/domain/usecases/search_products_use
 
 abstract class ProductsRepository {
   Future<Result<ProductPage>> search(SearchProductsParams params);
-  Future<Result<List<CategoryEntity>>> getCategories();
+  Future<Result<CategoryPage>> getCategories();
 }

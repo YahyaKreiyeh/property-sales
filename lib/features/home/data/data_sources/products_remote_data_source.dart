@@ -4,13 +4,12 @@ import 'package:dio/dio.dart';
 import 'package:property_sales/features/home/data/models/category_dto.dart';
 import 'package:property_sales/features/home/data/models/product_dto.dart';
 import 'package:property_sales/features/home/data/services/products_service.dart';
-import 'package:property_sales/features/home/domain/entites/category_entity.dart';
 import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart'
     show SearchProductsParams;
 
 abstract class ProductsRemoteDataSource {
   Future<ProductPageDto> search(SearchProductsParams params);
-  Future<List<CategoryEntity>> getCategories();
+  Future<CategoriesResponse> getCategories();
 }
 
 class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
@@ -54,20 +53,11 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
   }
 
   @override
-  Future<List<CategoryEntity>> getCategories() async {
+  Future<CategoriesResponse> getCategories() async {
     try {
-      final response = await _service.getCategories();
-      return response.data.map((dto) => _categoryDtoToEntity(dto)).toList();
+      return await _service.getCategories();
     } on DioException {
       rethrow;
     }
-  }
-
-  CategoryEntity _categoryDtoToEntity(CategoryDto dto) {
-    return CategoryEntity(
-      id: dto.id,
-      name: dto.name,
-      smallImageUrl: dto.smallImageUrl,
-    );
   }
 }

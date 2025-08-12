@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:property_sales/core/mixins/cubit_mixin.dart';
 import 'package:property_sales/core/models/result.dart';
+import 'package:property_sales/features/home/domain/entites/category_entity.dart';
 import 'package:property_sales/features/home/domain/entites/filter_entity.dart';
 import 'package:property_sales/features/home/domain/entites/product_entity.dart';
 import 'package:property_sales/features/home/domain/usecases/add_to_favorite_usecase.dart';
@@ -55,15 +56,22 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
     result.when(
       empty: () => safeEmit(
         state.copyWith(
-          categoriesStatus: const Result.success(data: []),
+          categoriesStatus: Result.success(
+            data: const CategoryPage(
+              data: [],
+              length: 0,
+              totalPages: 0,
+              message: 'No categories found',
+            ),
+          ),
           categories: const [],
         ),
       ),
       loading: () {},
-      success: (categories) => safeEmit(
+      success: (page) => safeEmit(
         state.copyWith(
-          categoriesStatus: Result.success(data: categories),
-          categories: categories,
+          categoriesStatus: Result.success(data: page),
+          categories: page.data,
         ),
       ),
       failure: (error, _, errorMessage) => safeEmit(
@@ -72,6 +80,7 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
             error: error,
             errorMessage: errorMessage,
           ),
+          categories: const [],
         ),
       ),
     );
