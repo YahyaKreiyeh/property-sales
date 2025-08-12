@@ -74,6 +74,7 @@ abstract class ProductPage with _$ProductPage {
     required List<ProductEntity> data,
     required int length,
     @JsonKey(name: 'total_pages') required int totalPages,
+    @JsonKey(name: 'message') String? message,
   }) = _ProductPage;
 
   factory ProductPage.fromJson(Map<String, dynamic> json) =>

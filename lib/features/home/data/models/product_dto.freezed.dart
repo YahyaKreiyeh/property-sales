@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProductPageDto {
 
- List<ProductDto> get data; int get length;@JsonKey(name: 'total_pages') int get totalPages;
+ List<ProductDto> get data;@JsonKey(defaultValue: 0) int? get length;@JsonKey(name: 'total_pages', defaultValue: 0) int? get totalPages;@JsonKey(defaultValue: '') String? get message;
 /// Create a copy of ProductPageDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ProductPageDtoCopyWith<ProductPageDto> get copyWith => _$ProductPageDtoCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductPageDto&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.length, length) || other.length == length)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductPageDto&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.length, length) || other.length == length)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data),length,totalPages);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data),length,totalPages,message);
 
 @override
 String toString() {
-  return 'ProductPageDto(data: $data, length: $length, totalPages: $totalPages)';
+  return 'ProductPageDto(data: $data, length: $length, totalPages: $totalPages, message: $message)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ProductPageDtoCopyWith<$Res>  {
   factory $ProductPageDtoCopyWith(ProductPageDto value, $Res Function(ProductPageDto) _then) = _$ProductPageDtoCopyWithImpl;
 @useResult
 $Res call({
- List<ProductDto> data, int length,@JsonKey(name: 'total_pages') int totalPages
+ List<ProductDto> data,@JsonKey(defaultValue: 0) int? length,@JsonKey(name: 'total_pages', defaultValue: 0) int? totalPages,@JsonKey(defaultValue: '') String? message
 });
 
 
@@ -65,12 +65,13 @@ class _$ProductPageDtoCopyWithImpl<$Res>
 
 /// Create a copy of ProductPageDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? data = null,Object? length = null,Object? totalPages = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? data = null,Object? length = freezed,Object? totalPages = freezed,Object? message = freezed,}) {
   return _then(_self.copyWith(
 data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
-as List<ProductDto>,length: null == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
-as int,totalPages: null == totalPages ? _self.totalPages : totalPages // ignore: cast_nullable_to_non_nullable
-as int,
+as List<ProductDto>,length: freezed == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
+as int?,totalPages: freezed == totalPages ? _self.totalPages : totalPages // ignore: cast_nullable_to_non_nullable
+as int?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -155,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ProductDto> data,  int length, @JsonKey(name: 'total_pages')  int totalPages)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ProductDto> data, @JsonKey(defaultValue: 0)  int? length, @JsonKey(name: 'total_pages', defaultValue: 0)  int? totalPages, @JsonKey(defaultValue: '')  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProductPageDto() when $default != null:
-return $default(_that.data,_that.length,_that.totalPages);case _:
+return $default(_that.data,_that.length,_that.totalPages,_that.message);case _:
   return orElse();
 
 }
@@ -176,10 +177,10 @@ return $default(_that.data,_that.length,_that.totalPages);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ProductDto> data,  int length, @JsonKey(name: 'total_pages')  int totalPages)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ProductDto> data, @JsonKey(defaultValue: 0)  int? length, @JsonKey(name: 'total_pages', defaultValue: 0)  int? totalPages, @JsonKey(defaultValue: '')  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _ProductPageDto():
-return $default(_that.data,_that.length,_that.totalPages);case _:
+return $default(_that.data,_that.length,_that.totalPages,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +197,10 @@ return $default(_that.data,_that.length,_that.totalPages);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ProductDto> data,  int length, @JsonKey(name: 'total_pages')  int totalPages)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ProductDto> data, @JsonKey(defaultValue: 0)  int? length, @JsonKey(name: 'total_pages', defaultValue: 0)  int? totalPages, @JsonKey(defaultValue: '')  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _ProductPageDto() when $default != null:
-return $default(_that.data,_that.length,_that.totalPages);case _:
+return $default(_that.data,_that.length,_that.totalPages,_that.message);case _:
   return null;
 
 }
@@ -211,7 +212,7 @@ return $default(_that.data,_that.length,_that.totalPages);case _:
 @JsonSerializable()
 
 class _ProductPageDto implements ProductPageDto {
-  const _ProductPageDto({required final  List<ProductDto> data, required this.length, @JsonKey(name: 'total_pages') required this.totalPages}): _data = data;
+  const _ProductPageDto({required final  List<ProductDto> data, @JsonKey(defaultValue: 0) this.length, @JsonKey(name: 'total_pages', defaultValue: 0) this.totalPages, @JsonKey(defaultValue: '') this.message}): _data = data;
   factory _ProductPageDto.fromJson(Map<String, dynamic> json) => _$ProductPageDtoFromJson(json);
 
  final  List<ProductDto> _data;
@@ -221,8 +222,9 @@ class _ProductPageDto implements ProductPageDto {
   return EqualUnmodifiableListView(_data);
 }
 
-@override final  int length;
-@override@JsonKey(name: 'total_pages') final  int totalPages;
+@override@JsonKey(defaultValue: 0) final  int? length;
+@override@JsonKey(name: 'total_pages', defaultValue: 0) final  int? totalPages;
+@override@JsonKey(defaultValue: '') final  String? message;
 
 /// Create a copy of ProductPageDto
 /// with the given fields replaced by the non-null parameter values.
@@ -237,16 +239,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductPageDto&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.length, length) || other.length == length)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductPageDto&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.length, length) || other.length == length)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),length,totalPages);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),length,totalPages,message);
 
 @override
 String toString() {
-  return 'ProductPageDto(data: $data, length: $length, totalPages: $totalPages)';
+  return 'ProductPageDto(data: $data, length: $length, totalPages: $totalPages, message: $message)';
 }
 
 
@@ -257,7 +259,7 @@ abstract mixin class _$ProductPageDtoCopyWith<$Res> implements $ProductPageDtoCo
   factory _$ProductPageDtoCopyWith(_ProductPageDto value, $Res Function(_ProductPageDto) _then) = __$ProductPageDtoCopyWithImpl;
 @override @useResult
 $Res call({
- List<ProductDto> data, int length,@JsonKey(name: 'total_pages') int totalPages
+ List<ProductDto> data,@JsonKey(defaultValue: 0) int? length,@JsonKey(name: 'total_pages', defaultValue: 0) int? totalPages,@JsonKey(defaultValue: '') String? message
 });
 
 
@@ -274,12 +276,13 @@ class __$ProductPageDtoCopyWithImpl<$Res>
 
 /// Create a copy of ProductPageDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? data = null,Object? length = null,Object? totalPages = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? data = null,Object? length = freezed,Object? totalPages = freezed,Object? message = freezed,}) {
   return _then(_ProductPageDto(
 data: null == data ? _self._data : data // ignore: cast_nullable_to_non_nullable
-as List<ProductDto>,length: null == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
-as int,totalPages: null == totalPages ? _self.totalPages : totalPages // ignore: cast_nullable_to_non_nullable
-as int,
+as List<ProductDto>,length: freezed == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
+as int?,totalPages: freezed == totalPages ? _self.totalPages : totalPages // ignore: cast_nullable_to_non_nullable
+as int?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -290,10 +293,7 @@ as int,
 /// @nodoc
 mixin _$ProductDto {
 
- int get id; String get name; num get price;@JsonKey(name: 'new_price') num get newPrice;@JsonKey(name: 'price_currency') String get priceCurrency;// Nested template
-@JsonKey(name: 'template_id') TemplateRefDto get template;// Extra fields
-@JsonKey(name: 'quantity_per') String get quantityPer;@JsonKey(name: 'is_favorite') bool get isFavorite;@JsonKey(name: 'view_count') int get viewCount;@JsonKey(name: 'product_main_image') String get imageUrl;// Review summary + items
-@JsonKey(name: 'review') ReviewSummaryDto get review;
+ int get id; String get name; num get price;@JsonKey(name: 'new_price') num get newPrice;@JsonKey(name: 'price_currency') String get priceCurrency;@JsonKey(name: 'template_id') TemplateRefDto get template;@JsonKey(name: 'quantity_per') String get quantityPer;@JsonKey(name: 'is_favorite') bool get isFavorite;@JsonKey(name: 'view_count') int get viewCount;@JsonKey(name: 'product_main_image') String get imageUrl;@JsonKey(name: 'review') ReviewSummaryDto get review;
 /// Create a copy of ProductDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -523,14 +523,11 @@ class _ProductDto implements ProductDto {
 @override final  num price;
 @override@JsonKey(name: 'new_price') final  num newPrice;
 @override@JsonKey(name: 'price_currency') final  String priceCurrency;
-// Nested template
 @override@JsonKey(name: 'template_id') final  TemplateRefDto template;
-// Extra fields
 @override@JsonKey(name: 'quantity_per') final  String quantityPer;
 @override@JsonKey(name: 'is_favorite') final  bool isFavorite;
 @override@JsonKey(name: 'view_count') final  int viewCount;
 @override@JsonKey(name: 'product_main_image') final  String imageUrl;
-// Review summary + items
 @override@JsonKey(name: 'review') final  ReviewSummaryDto review;
 
 /// Create a copy of ProductDto

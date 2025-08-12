@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:property_sales/core/constants/constants.dart';
+import 'package:property_sales/core/constants/enums.dart';
 import 'package:property_sales/core/helpers/formatters.dart';
 import 'package:property_sales/core/helpers/spacing.dart';
 import 'package:property_sales/core/models/result.dart';
@@ -11,6 +12,8 @@ import 'package:property_sales/core/themes/text_styles.dart';
 import 'package:property_sales/core/widgets/text_fields/custom_text_field.dart';
 import 'package:property_sales/features/home/domain/entites/product_entity.dart';
 import 'package:property_sales/features/home/presentation/cubit/home_cubit.dart';
+import 'package:property_sales/features/home/presentation/cubit/home_state.dart';
+import 'package:property_sales/features/snackbar/bloc/snackbar_bloc.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -52,7 +55,13 @@ class _Body extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [_SearchBox(), _ResultsHeader(), _SortRow(), _ProductsList()],
+        children: [
+          _SearchBox(),
+          _ResultsHeader(),
+          _SortRow(),
+          _ProductsList(),
+          _HomeBlocListener(),
+        ],
       ),
     );
   }
@@ -62,42 +71,74 @@ class _ProductsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<HomeCubit>();
-    final items = context.select((HomeCubit c) => c.state.items);
-    final status = context.select((HomeCubit c) => c.state.status);
-    final isLoadingMore = context.select(
-      (HomeCubit c) => c.state.isLoadingMore,
-    );
-    final searchTerm = context.select((HomeCubit c) => c.state.searchTerm);
-    final isInitialLoading = status.maybeWhen(
-      loading: () => true,
-      orElse: () => false,
+
+    final vm = context.select(
+      (HomeCubit c) => (
+        items: c.state.items,
+        isLoadingMore: c.state.isLoadingMore,
+        isLoading: c.state.status.isLoading,
+        isFailure: c.state.status.isFailure,
+        failureMessage: c.state.status.failureMessage,
+        backendMessage: c.state.status.successValue?.message,
+        searchTerm: c.state.searchTerm,
+        loadMoreError: c.state.loadMoreError,
+      ),
     );
 
     Widget child;
-    if (isInitialLoading && items.isEmpty) {
+    if (vm.isLoading && vm.items.isEmpty) {
       child = const Center(child: CircularProgressIndicator());
-    } else if (items.isEmpty && searchTerm.isNotEmpty) {
-      child = const Center(child: Text('No results'));
+    } else if (vm.isFailure && vm.items.isEmpty) {
+      child = _ErrorRetry(
+        icon: Icons.error_outline,
+        message: (vm.failureMessage?.isNotEmpty ?? false)
+            ? vm.failureMessage!
+            : 'Couldn’t load products',
+        actionLabel: 'Retry',
+        onAction: () => cubit.search(),
+      );
+    } else if (vm.items.isEmpty && vm.searchTerm.isNotEmpty) {
+      child = _ErrorRetry(
+        icon: Icons.search_off,
+        message: (vm.backendMessage?.isNotEmpty ?? false)
+            ? vm.backendMessage!
+            : 'No products found',
+      );
     } else {
       child = NotificationListener<ScrollNotification>(
         onNotification: (n) {
-          if (n.metrics.pixels >= n.metrics.maxScrollExtent - 400) {
+          if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
             cubit.loadMoreIfPossible();
           }
           return false;
         },
         child: ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          itemCount: items.length + (isLoadingMore ? 1 : 0),
+          itemCount:
+              vm.items.length +
+              ((vm.isLoadingMore || vm.loadMoreError != null) ? 1 : 0),
           separatorBuilder: (_, _) => const VerticalSpace(16),
           itemBuilder: (context, index) {
-            if (index >= items.length) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: Center(child: CircularProgressIndicator()),
-              );
+            if (index >= vm.items.length) {
+              if (vm.isLoadingMore) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (vm.loadMoreError != null) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 25),
+                  child: _ErrorRetry(
+                    icon: Icons.warning_amber_outlined,
+                    message: vm.loadMoreError!,
+                    actionLabel: 'Retry',
+                  ),
+                );
+              }
             }
-            final p = items[index];
+
+            final p = vm.items[index];
             return _ProductCard(item: p);
           },
         ),
@@ -111,7 +152,10 @@ class _ProductsList extends StatelessWidget {
 class _ResultsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final total = context.select((HomeCubit c) => c.state.totalLength);
+    final total = context.select(
+      (HomeCubit c) => c.state.status.successValue?.length ?? 0,
+    );
+
     final searchTerm = context.select((HomeCubit c) => c.state.searchTerm);
     return Column(
       children: [
@@ -267,6 +311,72 @@ class _ProductCard extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _HomeBlocListener extends StatelessWidget {
+  const _HomeBlocListener();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<HomeCubit, HomeState>(
+      listenWhen: (p, c) => p.status != c.status,
+      listener: (context, state) {
+        state.status.when(
+          success: (_) {},
+          failure: (error, _, msg) {
+            context.read<SnackbarBloc>().add(
+              AddSnackbarEvent(
+                message: msg ?? 'Something went wrong',
+                type: SnackbarType.error,
+              ),
+            );
+          },
+          loading: () {},
+          empty: () {},
+        );
+      },
+      child: const SizedBox.shrink(),
+    );
+  }
+}
+
+class _ErrorRetry extends StatelessWidget {
+  const _ErrorRetry({
+    required this.message,
+    this.icon,
+    this.actionLabel,
+    this.onAction,
+  });
+
+  final String message;
+  final IconData? icon;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) Icon(icon, size: 40, color: AppColors.grey),
+            if (icon != null) const VerticalSpace(12),
+            Text(
+              message,
+              style: TextStyles.greyText40015,
+              textAlign: TextAlign.center,
+            ),
+            if (actionLabel != null && onAction != null) ...[
+              const VerticalSpace(12),
+              TextButton(onPressed: onAction, child: Text(actionLabel!)),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

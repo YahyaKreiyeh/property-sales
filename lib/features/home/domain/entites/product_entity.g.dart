@@ -89,6 +89,7 @@ _ProductPage _$ProductPageFromJson(Map<String, dynamic> json) => _ProductPage(
       .toList(),
   length: (json['length'] as num).toInt(),
   totalPages: (json['total_pages'] as num).toInt(),
+  message: json['message'] as String?,
 );
 
 Map<String, dynamic> _$ProductPageToJson(_ProductPage instance) =>
@@ -96,4 +97,5 @@ Map<String, dynamic> _$ProductPageToJson(_ProductPage instance) =>
       'data': instance.data,
       'length': instance.length,
       'total_pages': instance.totalPages,
+      'message': instance.message,
     };

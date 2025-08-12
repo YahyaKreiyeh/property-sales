@@ -11,8 +11,9 @@ _ProductPageDto _$ProductPageDtoFromJson(Map<String, dynamic> json) =>
       data: (json['data'] as List<dynamic>)
           .map((e) => ProductDto.fromJson(e as Map<String, dynamic>))
           .toList(),
-      length: (json['length'] as num).toInt(),
-      totalPages: (json['total_pages'] as num).toInt(),
+      length: (json['length'] as num?)?.toInt() ?? 0,
+      totalPages: (json['total_pages'] as num?)?.toInt() ?? 0,
+      message: json['message'] as String? ?? '',
     );
 
 Map<String, dynamic> _$ProductPageDtoToJson(_ProductPageDto instance) =>
@@ -20,6 +21,7 @@ Map<String, dynamic> _$ProductPageDtoToJson(_ProductPageDto instance) =>
       'data': instance.data,
       'length': instance.length,
       'total_pages': instance.totalPages,
+      'message': instance.message,
     };
 
 _ProductDto _$ProductDtoFromJson(Map<String, dynamic> json) => _ProductDto(

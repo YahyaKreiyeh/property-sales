@@ -7,14 +7,12 @@ part 'home_state.freezed.dart';
 @freezed
 abstract class HomeState with _$HomeState {
   const factory HomeState({
-    @Default(Result.empty()) Result status,
+    @Default(Result.empty()) Result<ProductPage> status,
     @Default('') String searchTerm,
     @Default(1) int page,
     @Default(10) int limit,
-    @Default(0) int totalPages,
-    @Default(0) int totalLength,
     @Default(<ProductEntity>[]) List<ProductEntity> items,
     @Default(false) bool isLoadingMore,
-    String? errorMessage,
+    String? loadMoreError,
   }) = _HomeState;
 }

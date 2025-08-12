@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:property_sales/core/mixins/cubit_mixin.dart';
 import 'package:property_sales/core/models/result.dart';
+import 'package:property_sales/features/home/domain/entites/product_entity.dart';
 import 'package:property_sales/features/home/domain/repositories/products_repository.dart';
 import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart';
 
@@ -24,15 +25,13 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
   }
 
   void searchChanged(String term) {
-    safeEmit(state.copyWith(searchTerm: term, totalLength: 0));
+    safeEmit(state.copyWith(searchTerm: term));
     _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      search();
-    });
+    _debounce = Timer(const Duration(milliseconds: 500), () => search());
   }
 
   Future<void> search({String? term}) async {
-    final searchTerm = term ?? state.searchTerm.trim();
+    final searchTerm = (term ?? state.searchTerm).trim();
     final id = ++_reqId;
 
     safeEmit(
@@ -41,8 +40,6 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
         status: const Result.loading(),
         page: 1,
         items: const [],
-        totalPages: 0,
-        totalLength: 0,
       ),
     );
 
@@ -55,32 +52,31 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
     result.map(
       empty: (_) => safeEmit(
         state.copyWith(
-          status: const Result.success(data: []),
-          items: const [],
+          status: Result.success(
+            data: const ProductPage(
+              data: [],
+              length: 0,
+              totalPages: 0,
+              message: 'No products found',
+            ),
+          ),
           page: 1,
-          totalPages: 0,
-          totalLength: 0,
+          items: const [],
         ),
       ),
       loading: (_) {},
       success: (s) => safeEmit(
         state.copyWith(
-          status: const Result.success(data: []),
-          items: s.data.data,
+          status: Result.success(data: s.data),
           page: 1,
-          totalPages: s.data.totalPages,
-          totalLength: s.data.length,
-          errorMessage: null,
+          items: s.data.data,
         ),
       ),
       failure: (f) => safeEmit(
         state.copyWith(
           status: Result.failure(error: f.error, errorMessage: f.errorMessage),
-          items: const [],
           page: 1,
-          totalPages: 0,
-          totalLength: 0,
-          errorMessage: f.errorMessage,
+          items: const [],
         ),
       ),
     );
@@ -88,12 +84,13 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
 
   Future<void> loadMoreIfPossible() async {
     if (state.isLoadingMore) return;
-    if (state.page >= state.totalPages) return;
+
+    final totalPages = state.status.successValue?.totalPages ?? 0;
+    if (totalPages == 0 || state.page >= totalPages) return;
 
     safeEmit(state.copyWith(isLoadingMore: true));
 
     final nextPage = state.page + 1;
-
     final result = await _repo.search(
       SearchProductsParams(
         searchTerm: state.searchTerm.trim(),
@@ -106,19 +103,21 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
       empty: (_) => safeEmit(state.copyWith(isLoadingMore: false)),
       loading: (_) {},
       success: (s) {
-        final mergedItems = [...state.items, ...s.data.data];
+        final merged = [...state.items, ...s.data.data];
         safeEmit(
           state.copyWith(
-            items: mergedItems,
+            status: Result.success(data: s.data),
+            items: merged,
             page: nextPage,
-            totalPages: s.data.totalPages,
-            totalLength: s.data.length,
             isLoadingMore: false,
           ),
         );
       },
       failure: (f) => safeEmit(
-        state.copyWith(isLoadingMore: false, errorMessage: f.errorMessage),
+        state.copyWith(
+          isLoadingMore: false,
+          loadMoreError: f.errorMessage ?? 'Failed to load more products',
+        ),
       ),
     );
   }

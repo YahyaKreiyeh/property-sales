@@ -15,9 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProductEntity {
 
- int get id; String get name; double get price;@JsonKey(name: 'new_price') double get newPrice;@JsonKey(name: 'price_currency') String get priceCurrency;// Nested template object
-@JsonKey(name: 'template_id') TemplateRef get template;// Extra fields
-@JsonKey(name: 'quantity_per') String get quantityPer;@JsonKey(name: 'is_favorite') bool get isFavorite;@JsonKey(name: 'view_count') int get viewCount;@JsonKey(name: 'product_main_image') String get imageUrl;@JsonKey(name: 'review') ReviewSummary get review;
+ int get id; String get name; double get price;@JsonKey(name: 'new_price') double get newPrice;@JsonKey(name: 'price_currency') String get priceCurrency;@JsonKey(name: 'template_id') TemplateRef get template;@JsonKey(name: 'quantity_per') String get quantityPer;@JsonKey(name: 'is_favorite') bool get isFavorite;@JsonKey(name: 'view_count') int get viewCount;@JsonKey(name: 'product_main_image') String get imageUrl;@JsonKey(name: 'review') ReviewSummary get review;
 /// Create a copy of ProductEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -247,9 +245,7 @@ class _ProductEntity implements ProductEntity {
 @override final  double price;
 @override@JsonKey(name: 'new_price') final  double newPrice;
 @override@JsonKey(name: 'price_currency') final  String priceCurrency;
-// Nested template object
 @override@JsonKey(name: 'template_id') final  TemplateRef template;
-// Extra fields
 @override@JsonKey(name: 'quantity_per') final  String quantityPer;
 @override@JsonKey(name: 'is_favorite') final  bool isFavorite;
 @override@JsonKey(name: 'view_count') final  int viewCount;
@@ -614,9 +610,7 @@ as String,
 /// @nodoc
 mixin _$ReviewSummary {
 
-// average
- double get review;// list of detailed reviews
-@JsonKey(name: 'review_ids') List<ReviewItem> get reviewIds;
+ double get review;@JsonKey(name: 'review_ids') List<ReviewItem> get reviewIds;
 /// Create a copy of ReviewSummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -814,11 +808,8 @@ class _ReviewSummary implements ReviewSummary {
   const _ReviewSummary({this.review = 0.0, @JsonKey(name: 'review_ids') final  List<ReviewItem> reviewIds = const <ReviewItem>[]}): _reviewIds = reviewIds;
   factory _ReviewSummary.fromJson(Map<String, dynamic> json) => _$ReviewSummaryFromJson(json);
 
-// average
 @override@JsonKey() final  double review;
-// list of detailed reviews
  final  List<ReviewItem> _reviewIds;
-// list of detailed reviews
 @override@JsonKey(name: 'review_ids') List<ReviewItem> get reviewIds {
   if (_reviewIds is EqualUnmodifiableListView) return _reviewIds;
   // ignore: implicit_dynamic_type
@@ -891,8 +882,7 @@ as List<ReviewItem>,
 /// @nodoc
 mixin _$ReviewItem {
 
-@JsonKey(name: 'review_id') int get reviewId;@JsonKey(name: 'review_text') String get reviewText; ReviewUser get user; String get date;// keep as String; parse to DateTime in app code if needed
-@JsonKey(name: 'stars_count') double get starsCount;
+@JsonKey(name: 'review_id') int get reviewId;@JsonKey(name: 'review_text') String get reviewText; ReviewUser get user; String get date;@JsonKey(name: 'stars_count') double get starsCount;
 /// Create a copy of ReviewItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1106,7 +1096,6 @@ class _ReviewItem implements ReviewItem {
 @override@JsonKey(name: 'review_text') final  String reviewText;
 @override final  ReviewUser user;
 @override final  String date;
-// keep as String; parse to DateTime in app code if needed
 @override@JsonKey(name: 'stars_count') final  double starsCount;
 
 /// Create a copy of ReviewItem
@@ -1452,7 +1441,7 @@ as String,
 /// @nodoc
 mixin _$ProductPage {
 
- List<ProductEntity> get data; int get length;@JsonKey(name: 'total_pages') int get totalPages;
+ List<ProductEntity> get data; int get length;@JsonKey(name: 'total_pages') int get totalPages;@JsonKey(name: 'message') String? get message;
 /// Create a copy of ProductPage
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1465,16 +1454,16 @@ $ProductPageCopyWith<ProductPage> get copyWith => _$ProductPageCopyWithImpl<Prod
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductPage&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.length, length) || other.length == length)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductPage&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.length, length) || other.length == length)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data),length,totalPages);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data),length,totalPages,message);
 
 @override
 String toString() {
-  return 'ProductPage(data: $data, length: $length, totalPages: $totalPages)';
+  return 'ProductPage(data: $data, length: $length, totalPages: $totalPages, message: $message)';
 }
 
 
@@ -1485,7 +1474,7 @@ abstract mixin class $ProductPageCopyWith<$Res>  {
   factory $ProductPageCopyWith(ProductPage value, $Res Function(ProductPage) _then) = _$ProductPageCopyWithImpl;
 @useResult
 $Res call({
- List<ProductEntity> data, int length,@JsonKey(name: 'total_pages') int totalPages
+ List<ProductEntity> data, int length,@JsonKey(name: 'total_pages') int totalPages,@JsonKey(name: 'message') String? message
 });
 
 
@@ -1502,12 +1491,13 @@ class _$ProductPageCopyWithImpl<$Res>
 
 /// Create a copy of ProductPage
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? data = null,Object? length = null,Object? totalPages = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? data = null,Object? length = null,Object? totalPages = null,Object? message = freezed,}) {
   return _then(_self.copyWith(
 data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
 as List<ProductEntity>,length: null == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
 as int,totalPages: null == totalPages ? _self.totalPages : totalPages // ignore: cast_nullable_to_non_nullable
-as int,
+as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -1592,10 +1582,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ProductEntity> data,  int length, @JsonKey(name: 'total_pages')  int totalPages)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<ProductEntity> data,  int length, @JsonKey(name: 'total_pages')  int totalPages, @JsonKey(name: 'message')  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProductPage() when $default != null:
-return $default(_that.data,_that.length,_that.totalPages);case _:
+return $default(_that.data,_that.length,_that.totalPages,_that.message);case _:
   return orElse();
 
 }
@@ -1613,10 +1603,10 @@ return $default(_that.data,_that.length,_that.totalPages);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ProductEntity> data,  int length, @JsonKey(name: 'total_pages')  int totalPages)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ProductEntity> data,  int length, @JsonKey(name: 'total_pages')  int totalPages, @JsonKey(name: 'message')  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _ProductPage():
-return $default(_that.data,_that.length,_that.totalPages);case _:
+return $default(_that.data,_that.length,_that.totalPages,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1633,10 +1623,10 @@ return $default(_that.data,_that.length,_that.totalPages);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ProductEntity> data,  int length, @JsonKey(name: 'total_pages')  int totalPages)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<ProductEntity> data,  int length, @JsonKey(name: 'total_pages')  int totalPages, @JsonKey(name: 'message')  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _ProductPage() when $default != null:
-return $default(_that.data,_that.length,_that.totalPages);case _:
+return $default(_that.data,_that.length,_that.totalPages,_that.message);case _:
   return null;
 
 }
@@ -1648,7 +1638,7 @@ return $default(_that.data,_that.length,_that.totalPages);case _:
 @JsonSerializable()
 
 class _ProductPage implements ProductPage {
-  const _ProductPage({required final  List<ProductEntity> data, required this.length, @JsonKey(name: 'total_pages') required this.totalPages}): _data = data;
+  const _ProductPage({required final  List<ProductEntity> data, required this.length, @JsonKey(name: 'total_pages') required this.totalPages, @JsonKey(name: 'message') this.message}): _data = data;
   factory _ProductPage.fromJson(Map<String, dynamic> json) => _$ProductPageFromJson(json);
 
  final  List<ProductEntity> _data;
@@ -1660,6 +1650,7 @@ class _ProductPage implements ProductPage {
 
 @override final  int length;
 @override@JsonKey(name: 'total_pages') final  int totalPages;
+@override@JsonKey(name: 'message') final  String? message;
 
 /// Create a copy of ProductPage
 /// with the given fields replaced by the non-null parameter values.
@@ -1674,16 +1665,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductPage&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.length, length) || other.length == length)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductPage&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.length, length) || other.length == length)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),length,totalPages);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),length,totalPages,message);
 
 @override
 String toString() {
-  return 'ProductPage(data: $data, length: $length, totalPages: $totalPages)';
+  return 'ProductPage(data: $data, length: $length, totalPages: $totalPages, message: $message)';
 }
 
 
@@ -1694,7 +1685,7 @@ abstract mixin class _$ProductPageCopyWith<$Res> implements $ProductPageCopyWith
   factory _$ProductPageCopyWith(_ProductPage value, $Res Function(_ProductPage) _then) = __$ProductPageCopyWithImpl;
 @override @useResult
 $Res call({
- List<ProductEntity> data, int length,@JsonKey(name: 'total_pages') int totalPages
+ List<ProductEntity> data, int length,@JsonKey(name: 'total_pages') int totalPages,@JsonKey(name: 'message') String? message
 });
 
 
@@ -1711,12 +1702,13 @@ class __$ProductPageCopyWithImpl<$Res>
 
 /// Create a copy of ProductPage
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? data = null,Object? length = null,Object? totalPages = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? data = null,Object? length = null,Object? totalPages = null,Object? message = freezed,}) {
   return _then(_ProductPage(
 data: null == data ? _self._data : data // ignore: cast_nullable_to_non_nullable
 as List<ProductEntity>,length: null == length ? _self.length : length // ignore: cast_nullable_to_non_nullable
 as int,totalPages: null == totalPages ? _self.totalPages : totalPages // ignore: cast_nullable_to_non_nullable
-as int,
+as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

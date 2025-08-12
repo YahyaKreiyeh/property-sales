@@ -8,8 +8,9 @@ part 'product_dto.g.dart';
 abstract class ProductPageDto with _$ProductPageDto {
   const factory ProductPageDto({
     required List<ProductDto> data,
-    required int length,
-    @JsonKey(name: 'total_pages') required int totalPages,
+    @JsonKey(defaultValue: 0) int? length,
+    @JsonKey(name: 'total_pages', defaultValue: 0) int? totalPages,
+    @JsonKey(defaultValue: '') String? message,
   }) = _ProductPageDto;
 
   factory ProductPageDto.fromJson(Map<String, dynamic> json) =>
@@ -84,8 +85,9 @@ abstract class ReviewUserDto with _$ReviewUserDto {
 extension ProductPageDtoX on ProductPageDto {
   ProductPage toDomain() => ProductPage(
     data: data.map((e) => e.toDomain()).toList(),
-    length: length,
-    totalPages: totalPages,
+    length: (length ?? data.length),
+    totalPages: (totalPages ?? 0),
+    message: message,
   );
 }
 
