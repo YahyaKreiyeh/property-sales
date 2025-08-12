@@ -333,7 +333,7 @@ class _PriceInputs extends StatelessWidget {
       children: [
         Expanded(
           child: CustomTextField(
-            initialValue: filterDraft.minPrice?.toString() ?? '',
+            initialValue: _formatPrice(filterDraft.minPrice),
             hintText: 'From',
             keyboardType: TextInputType.number,
             onChanged: cubit.updateMinPrice,
@@ -342,7 +342,7 @@ class _PriceInputs extends StatelessWidget {
         const HorizontalSpace(16),
         Expanded(
           child: CustomTextField(
-            initialValue: filterDraft.maxPrice?.toString() ?? '',
+            initialValue: _formatPrice(filterDraft.maxPrice),
             hintText: 'To',
             keyboardType: TextInputType.number,
             onChanged: cubit.updateMaxPrice,
@@ -350,6 +350,15 @@ class _PriceInputs extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _formatPrice(double? price) {
+    if (price == null) return '';
+
+    if (price == price.toInt()) {
+      return price.toInt().toString();
+    }
+    return price.toString();
   }
 }
 
