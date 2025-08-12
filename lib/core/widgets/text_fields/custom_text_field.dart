@@ -13,7 +13,7 @@ class CustomTextField extends StatelessWidget {
   final String? errorText;
   final bool isRequired;
   final Widget? prefixIcon;
-  final IconData? suffixIcon;
+  final Widget? suffixIcon;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final bool obscureText;
@@ -90,13 +90,7 @@ class CustomTextField extends StatelessWidget {
           errorText: errorText,
           counterText: '',
           focusedBorder: showBorder ? null : InputBorder.none,
-          suffixIcon: suffixIcon != null
-              ? Icon(
-                  suffixIcon,
-                  size: 18,
-                  color: Theme.of(context).primaryColor,
-                )
-              : null,
+          suffixIcon: suffixIcon,
           prefixIcon: prefixIcon,
           prefixIconConstraints: prefixIconConstraints,
         ),

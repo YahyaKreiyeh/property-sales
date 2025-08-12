@@ -1,6 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:property_sales/core/networking/dio_factory.dart';
+import 'package:property_sales/features/home/data/data_sources/products_remote_data_source.dart';
+import 'package:property_sales/features/home/data/repositories/products_repository_impl.dart';
+import 'package:property_sales/features/home/data/services/products_service.dart';
+import 'package:property_sales/features/home/domain/repositories/products_repository.dart';
+import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart';
+import 'package:property_sales/features/home/presentation/cubit/home_cubit.dart';
 import 'package:property_sales/features/login/data/data_sources/auth_local_data_source.dart';
 import 'package:property_sales/features/login/data/repositories/login_repository_impl.dart';
 import 'package:property_sales/features/login/domain/repositories/login_repository.dart';
@@ -11,12 +17,13 @@ import 'package:property_sales/features/snackbar/bloc/snackbar_bloc.dart';
 final getIt = GetIt.instance;
 
 Future<void> setupGetIt() async {
-  Dio dio = await DioFactory.getDio();
+  final dio = await DioFactory.getDio();
+  getIt.registerSingleton<Dio>(dio);
 
-  // snackbar
+  // Snackbar
   getIt.registerFactory<SnackbarBloc>(() => SnackbarBloc());
 
-  // login
+  // Login
   getIt.registerFactory<LoginCubit>(() => LoginCubit(getIt()));
   getIt.registerLazySingleton<LoginUseCase>(() => LoginUseCase(getIt()));
   getIt.registerLazySingleton<LocalDataSource>(
@@ -25,4 +32,17 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<LoginRepository>(
     () => LoginRepositoryImpl(getIt()),
   );
+
+  // Home
+  getIt.registerLazySingleton<ProductsService>(() => ProductsService(getIt()));
+  getIt.registerLazySingleton<ProductsRemoteDataSource>(
+    () => ProductsRemoteDataSourceImpl(getIt()),
+  );
+  getIt.registerLazySingleton<ProductsRepository>(
+    () => ProductsRepositoryImpl(getIt()),
+  );
+  getIt.registerLazySingleton<SearchProductsUseCase>(
+    () => SearchProductsUseCase(getIt()),
+  );
+  getIt.registerFactory<HomeCubit>(() => HomeCubit(getIt()));
 }
