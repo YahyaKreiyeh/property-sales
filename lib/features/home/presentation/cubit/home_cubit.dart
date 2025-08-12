@@ -74,8 +74,63 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
     _debounce = Timer(const Duration(milliseconds: 500), () => search());
   }
 
-  void applyFilter(FilterEntity filter) {
-    safeEmit(state.copyWith(currentFilter: filter));
+  void initializeFilterDraft() {
+    safeEmit(
+      state.copyWith(filterDraft: state.currentFilter, selectedCity: null),
+    );
+  }
+
+  void toggleCategory(int categoryId) {
+    final currentIds = List<int>.from(state.filterDraft.categoryIds);
+    if (currentIds.contains(categoryId)) {
+      currentIds.remove(categoryId);
+    } else {
+      currentIds.add(categoryId);
+    }
+
+    safeEmit(
+      state.copyWith(
+        filterDraft: state.filterDraft.copyWith(categoryIds: currentIds),
+      ),
+    );
+  }
+
+  void updateMinPrice(String value) {
+    final minPrice = double.tryParse(value);
+    safeEmit(
+      state.copyWith(
+        filterDraft: state.filterDraft.copyWith(minPrice: minPrice),
+      ),
+    );
+  }
+
+  void updateMaxPrice(String value) {
+    final maxPrice = double.tryParse(value);
+    safeEmit(
+      state.copyWith(
+        filterDraft: state.filterDraft.copyWith(maxPrice: maxPrice),
+      ),
+    );
+  }
+
+  void selectCity(String? city) {
+    safeEmit(state.copyWith(selectedCity: city));
+  }
+
+  void applyFilter() {
+    safeEmit(state.copyWith(currentFilter: state.filterDraft));
+    search();
+  }
+
+  void resetFilter() {
+    const emptyFilter = FilterEntity();
+    safeEmit(
+      state.copyWith(
+        currentFilter: emptyFilter,
+        filterDraft: emptyFilter,
+        selectedCity: null,
+      ),
+    );
     search();
   }
 

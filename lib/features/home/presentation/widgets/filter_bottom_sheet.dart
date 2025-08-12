@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:property_sales/core/constants/constants.dart';
 import 'package:property_sales/core/helpers/spacing.dart';
 import 'package:property_sales/core/models/result.dart';
+import 'package:property_sales/core/routing/routes_extension.dart';
 import 'package:property_sales/core/themes/app_colors.dart';
 import 'package:property_sales/core/themes/text_styles.dart';
 import 'package:property_sales/core/widgets/buttons/primary_button.dart';
@@ -10,84 +12,8 @@ import 'package:property_sales/features/home/domain/entites/category_entity.dart
 import 'package:property_sales/features/home/domain/entites/filter_entity.dart';
 import 'package:property_sales/features/home/presentation/cubit/home_cubit.dart';
 
-class FilterBottomSheet extends StatefulWidget {
-  final List<CategoryEntity> categories;
-  final FilterEntity currentFilter;
-  final Function(FilterEntity) onApplyFilter;
-
-  const FilterBottomSheet({
-    super.key,
-    required this.categories,
-    required this.currentFilter,
-    required this.onApplyFilter,
-  });
-
-  @override
-  State<FilterBottomSheet> createState() => _FilterBottomSheetState();
-}
-
-class _FilterBottomSheetState extends State<FilterBottomSheet> {
-  late FilterEntity _filter;
-  final TextEditingController _minPriceController = TextEditingController();
-  final TextEditingController _maxPriceController = TextEditingController();
-  String? _selectedCity;
-
-  final List<String> _cities = [
-    'Damascus',
-    'Aleppo',
-    'Homs',
-    'Hama',
-    'Latakia',
-    'Tartus',
-    'Daraa',
-    'Deir ez-Zor',
-    'Al-Hasakah',
-    'Ar-Raqqah',
-    'As-Suwayda',
-    'Quneitra',
-    'Idlib',
-    'Rural Damascus',
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _filter = widget.currentFilter;
-    _minPriceController.text = _filter.minPrice?.toString() ?? '';
-    _maxPriceController.text = _filter.maxPrice?.toString() ?? '';
-  }
-
-  @override
-  void dispose() {
-    _minPriceController.dispose();
-    _maxPriceController.dispose();
-    super.dispose();
-  }
-
-  void _toggleCategory(int categoryId) {
-    setState(() {
-      final currentIds = List<int>.from(_filter.categoryIds);
-      if (currentIds.contains(categoryId)) {
-        currentIds.remove(categoryId);
-      } else {
-        currentIds.add(categoryId);
-      }
-      _filter = _filter.copyWith(categoryIds: currentIds);
-    });
-  }
-
-  void _applyFilter() {
-    final minPrice = double.tryParse(_minPriceController.text);
-    final maxPrice = double.tryParse(_maxPriceController.text);
-
-    final updatedFilter = _filter.copyWith(
-      minPrice: minPrice,
-      maxPrice: maxPrice,
-    );
-
-    widget.onApplyFilter(updatedFilter);
-    Navigator.pop(context);
-  }
+class FilterBottomSheet extends StatelessWidget {
+  const FilterBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -96,56 +22,74 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildHeader(),
-          Flexible(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildCategoriesSection(),
-                  const VerticalSpace(24),
-                  _buildStateSection(),
-                  const VerticalSpace(24),
-                  _buildPriceSection(),
-                  const VerticalSpace(40),
-                  _buildApplyButton(),
-                  const VerticalSpace(20),
-                ],
-              ),
-            ),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(horizontalPadding),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [_Header(), _Filters(), _SubmitButton()],
+        ),
       ),
     );
   }
+}
 
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const SizedBox(width: 24), // for centering
-          Text(
+class _SubmitButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [_ApplyButton(), const VerticalSpace(20)]);
+  }
+}
+
+class _Filters extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _Categories(),
+            const VerticalSpace(24),
+            _State(),
+            const VerticalSpace(24),
+            _Price(),
+            const VerticalSpace(40),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Center(
+          child: Text(
             'Filter',
             style: TextStyles.primaryText60020.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
+        ),
+        Positioned(
+          right: 0,
+          child: GestureDetector(
+            onTap: () => context.pop(),
             child: const Icon(Icons.close, size: 24, color: AppColors.grey),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+}
 
-  Widget _buildCategoriesSection() {
+class _Categories extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -156,75 +100,112 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           ),
         ),
         const VerticalSpace(16),
-        _buildCategoriesContent(),
+        _CategoriesChips(),
       ],
     );
   }
+}
 
-  Widget _buildCategoriesContent() {
+class _CategoriesChips extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     final categoriesStatus = context
         .select<HomeCubit, Result<List<CategoryEntity>>>(
           (cubit) => cubit.state.categoriesStatus,
         );
 
     return categoriesStatus.when(
-      loading: () => const Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 32),
-          child: Column(
-            children: [
-              CircularProgressIndicator(),
-              VerticalSpace(12),
-              Text(
-                'Loading categories...',
-                style: TextStyle(color: AppColors.grey),
-              ),
-            ],
-          ),
-        ),
-      ),
-      success: (categories) => _buildCategoryChips(categories),
-      failure: (error, _, errorMessage) => _buildErrorState(errorMessage),
-      empty: () => _buildEmptyState(),
+      loading: () => _CategoriesLoading(),
+      success: (categories) => _CategoriesGrid(categories: categories),
+      failure: (error, _, errorMessage) =>
+          _CategoriesError(errorMessage: errorMessage),
+      empty: () => _CategoriesEmpty(),
     );
   }
+}
 
-  Widget _buildCategoryChips(List<CategoryEntity> categories) {
-    if (categories.isEmpty) {
-      return _buildEmptyState();
-    }
+class _CategoriesLoading extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 32),
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+
+class _CategoriesGrid extends StatelessWidget {
+  const _CategoriesGrid({required this.categories});
+  final List<CategoryEntity> categories;
+
+  @override
+  Widget build(BuildContext context) {
+    if (categories.isEmpty) return _CategoriesEmpty();
+
+    final selectedCategoryIds = context.select<HomeCubit, List<int>>(
+      (cubit) => cubit.state.filterDraft.categoryIds,
+    );
 
     return Wrap(
       spacing: 12,
       runSpacing: 12,
       children: categories.map((category) {
-        final isSelected = _filter.categoryIds.contains(category.id);
-        return GestureDetector(
-          onTap: () => _toggleCategory(category.id),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? AppColors.primary.withValues(alpha: 0.1)
-                  : AppColors.neutral150,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isSelected ? AppColors.primary : Colors.transparent,
-              ),
-            ),
-            child: Text(
-              category.name,
-              style: TextStyles.primary50014.copyWith(
-                color: isSelected ? AppColors.primary : AppColors.grey,
-              ),
-            ),
-          ),
+        final isSelected = selectedCategoryIds.contains(category.id);
+        return _CategoryChip(
+          category: category,
+          isSelected: isSelected,
+          onTap: () => context.read<HomeCubit>().toggleCategory(category.id),
         );
       }).toList(),
     );
   }
+}
 
-  Widget _buildErrorState(String? errorMessage) {
+class _CategoryChip extends StatelessWidget {
+  const _CategoryChip({
+    required this.category,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final CategoryEntity category;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : AppColors.neutral150,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : Colors.transparent,
+          ),
+        ),
+        child: Text(
+          category.name,
+          style: TextStyles.primary50014.copyWith(
+            color: isSelected ? AppColors.primary : AppColors.grey,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CategoriesError extends StatelessWidget {
+  const _CategoriesError({required this.errorMessage});
+  final String? errorMessage;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -238,17 +219,18 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           ),
           const VerticalSpace(12),
           TextButton(
-            onPressed: () {
-              context.read<HomeCubit>().retryLoadCategories();
-            },
+            onPressed: () => context.read<HomeCubit>().retryLoadCategories(),
             child: const Text('Retry'),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildEmptyState() {
+class _CategoriesEmpty extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -264,8 +246,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       ),
     );
   }
+}
 
-  Widget _buildStateSection() {
+class _State extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -276,40 +261,44 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           ),
         ),
         const VerticalSpace(12),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.neutral200),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: _selectedCity,
-            decoration: const InputDecoration(
-              hintText: 'State',
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-            ),
-            icon: const Icon(
-              Icons.keyboard_arrow_down,
-              color: AppColors.primary,
-            ),
-            items: _cities.map((city) {
-              return DropdownMenuItem(value: city, child: Text(city));
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedCity = value;
-              });
-            },
-          ),
-        ),
+        _StateDropdown(),
       ],
     );
   }
+}
 
-  Widget _buildPriceSection() {
+class _StateDropdown extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final selectedCity = context.select<HomeCubit, String?>(
+      (cubit) => cubit.state.selectedCity,
+    );
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.neutral200),
+      ),
+      child: DropdownButtonFormField<String>(
+        value: selectedCity,
+        decoration: const InputDecoration(
+          hintText: 'State',
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+        icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primary),
+        items: cities.map((city) {
+          return DropdownMenuItem(value: city, child: Text(city));
+        }).toList(),
+        onChanged: (value) => context.read<HomeCubit>().selectCity(value),
+      ),
+    );
+  }
+}
+
+class _Price extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -326,33 +315,53 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           ],
         ),
         const VerticalSpace(12),
-        Row(
-          children: [
-            Expanded(
-              child: CustomTextField(
-                controller: _minPriceController,
-                hintText: 'From',
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            const HorizontalSpace(16),
-            Expanded(
-              child: CustomTextField(
-                controller: _maxPriceController,
-                hintText: 'To',
-                keyboardType: TextInputType.number,
-              ),
-            ),
-          ],
+        _PriceInputs(),
+      ],
+    );
+  }
+}
+
+class _PriceInputs extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<HomeCubit>();
+    final filterDraft = context.select<HomeCubit, FilterEntity>(
+      (cubit) => cubit.state.filterDraft,
+    );
+
+    return Row(
+      children: [
+        Expanded(
+          child: CustomTextField(
+            initialValue: filterDraft.minPrice?.toString() ?? '',
+            hintText: 'From',
+            keyboardType: TextInputType.number,
+            onChanged: cubit.updateMinPrice,
+          ),
+        ),
+        const HorizontalSpace(16),
+        Expanded(
+          child: CustomTextField(
+            initialValue: filterDraft.maxPrice?.toString() ?? '',
+            hintText: 'To',
+            keyboardType: TextInputType.number,
+            onChanged: cubit.updateMaxPrice,
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildApplyButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: PrimaryButton(text: 'Apply', onPressed: _applyFilter),
+class _ApplyButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return PrimaryButton(
+      text: 'Apply',
+      onPressed: () {
+        context.read<HomeCubit>().applyFilter();
+        context.pop();
+      },
     );
   }
 }

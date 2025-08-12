@@ -208,6 +208,7 @@ class _ResultsHeader extends StatelessWidget {
     currentFilter,
   ) {
     cubit.loadCategoriesIfNeeded();
+    cubit.initializeFilterDraft();
 
     showModalBottomSheet(
       context: context,
@@ -219,11 +220,7 @@ class _ResultsHeader extends StatelessWidget {
         ),
         child: BlocProvider.value(
           value: cubit,
-          child: FilterBottomSheet(
-            categories: categories,
-            currentFilter: currentFilter,
-            onApplyFilter: cubit.applyFilter,
-          ),
+          child: const FilterBottomSheet(),
         ),
       ),
     );

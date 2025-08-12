@@ -15,3 +15,20 @@ class SharedPrefKeys {
   static const fixedToken =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUyLCJ0aW1lc3RhbXAiOiIyMDI1LTA1LTI2IDE3OjIyOjAzLjc2MzEyMiJ9.bz3PuXqlmnmehswp-qiPfR-QC8-rYPGz96MCLXKyd4';
 }
+
+const List<String> cities = [
+  'Damascus',
+  'Aleppo',
+  'Homs',
+  'Hama',
+  'Latakia',
+  'Tartus',
+  'Daraa',
+  'Deir ez-Zor',
+  'Al-Hasakah',
+  'Ar-Raqqah',
+  'As-Suwayda',
+  'Quneitra',
+  'Idlib',
+  'Rural Damascus',
+];

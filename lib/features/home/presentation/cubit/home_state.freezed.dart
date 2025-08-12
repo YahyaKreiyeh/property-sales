@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HomeState {
 
- Result<ProductPage> get status; Result<List<CategoryEntity>> get categoriesStatus; String get searchTerm; int get page; int get limit; List<ProductEntity> get items; List<CategoryEntity> get categories; bool get isLoadingMore; String? get loadMoreError; FilterEntity get currentFilter;
+ Result<ProductPage> get status; Result<List<CategoryEntity>> get categoriesStatus; String get searchTerm; int get page; int get limit; List<ProductEntity> get items; List<CategoryEntity> get categories; bool get isLoadingMore; String? get loadMoreError; FilterEntity get currentFilter; FilterEntity get filterDraft; String? get selectedCity;
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $HomeStateCopyWith<HomeState> get copyWith => _$HomeStateCopyWithImpl<HomeState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.status, status) || other.status == status)&&(identical(other.categoriesStatus, categoriesStatus) || other.categoriesStatus == categoriesStatus)&&(identical(other.searchTerm, searchTerm) || other.searchTerm == searchTerm)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&const DeepCollectionEquality().equals(other.items, items)&&const DeepCollectionEquality().equals(other.categories, categories)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.loadMoreError, loadMoreError) || other.loadMoreError == loadMoreError)&&(identical(other.currentFilter, currentFilter) || other.currentFilter == currentFilter));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.status, status) || other.status == status)&&(identical(other.categoriesStatus, categoriesStatus) || other.categoriesStatus == categoriesStatus)&&(identical(other.searchTerm, searchTerm) || other.searchTerm == searchTerm)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&const DeepCollectionEquality().equals(other.items, items)&&const DeepCollectionEquality().equals(other.categories, categories)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.loadMoreError, loadMoreError) || other.loadMoreError == loadMoreError)&&(identical(other.currentFilter, currentFilter) || other.currentFilter == currentFilter)&&(identical(other.filterDraft, filterDraft) || other.filterDraft == filterDraft)&&(identical(other.selectedCity, selectedCity) || other.selectedCity == selectedCity));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,categoriesStatus,searchTerm,page,limit,const DeepCollectionEquality().hash(items),const DeepCollectionEquality().hash(categories),isLoadingMore,loadMoreError,currentFilter);
+int get hashCode => Object.hash(runtimeType,status,categoriesStatus,searchTerm,page,limit,const DeepCollectionEquality().hash(items),const DeepCollectionEquality().hash(categories),isLoadingMore,loadMoreError,currentFilter,filterDraft,selectedCity);
 
 @override
 String toString() {
-  return 'HomeState(status: $status, categoriesStatus: $categoriesStatus, searchTerm: $searchTerm, page: $page, limit: $limit, items: $items, categories: $categories, isLoadingMore: $isLoadingMore, loadMoreError: $loadMoreError, currentFilter: $currentFilter)';
+  return 'HomeState(status: $status, categoriesStatus: $categoriesStatus, searchTerm: $searchTerm, page: $page, limit: $limit, items: $items, categories: $categories, isLoadingMore: $isLoadingMore, loadMoreError: $loadMoreError, currentFilter: $currentFilter, filterDraft: $filterDraft, selectedCity: $selectedCity)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $HomeStateCopyWith<$Res>  {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) _then) = _$HomeStateCopyWithImpl;
 @useResult
 $Res call({
- Result<ProductPage> status, Result<List<CategoryEntity>> categoriesStatus, String searchTerm, int page, int limit, List<ProductEntity> items, List<CategoryEntity> categories, bool isLoadingMore, String? loadMoreError, FilterEntity currentFilter
+ Result<ProductPage> status, Result<List<CategoryEntity>> categoriesStatus, String searchTerm, int page, int limit, List<ProductEntity> items, List<CategoryEntity> categories, bool isLoadingMore, String? loadMoreError, FilterEntity currentFilter, FilterEntity filterDraft, String? selectedCity
 });
 
 
-$ResultCopyWith<ProductPage, $Res> get status;$ResultCopyWith<List<CategoryEntity>, $Res> get categoriesStatus;$FilterEntityCopyWith<$Res> get currentFilter;
+$ResultCopyWith<ProductPage, $Res> get status;$ResultCopyWith<List<CategoryEntity>, $Res> get categoriesStatus;$FilterEntityCopyWith<$Res> get currentFilter;$FilterEntityCopyWith<$Res> get filterDraft;
 
 }
 /// @nodoc
@@ -62,7 +62,7 @@ class _$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? categoriesStatus = null,Object? searchTerm = null,Object? page = null,Object? limit = null,Object? items = null,Object? categories = null,Object? isLoadingMore = null,Object? loadMoreError = freezed,Object? currentFilter = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? categoriesStatus = null,Object? searchTerm = null,Object? page = null,Object? limit = null,Object? items = null,Object? categories = null,Object? isLoadingMore = null,Object? loadMoreError = freezed,Object? currentFilter = null,Object? filterDraft = null,Object? selectedCity = freezed,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as Result<ProductPage>,categoriesStatus: null == categoriesStatus ? _self.categoriesStatus : categoriesStatus // ignore: cast_nullable_to_non_nullable
@@ -74,7 +74,9 @@ as List<ProductEntity>,categories: null == categories ? _self.categories : categ
 as List<CategoryEntity>,isLoadingMore: null == isLoadingMore ? _self.isLoadingMore : isLoadingMore // ignore: cast_nullable_to_non_nullable
 as bool,loadMoreError: freezed == loadMoreError ? _self.loadMoreError : loadMoreError // ignore: cast_nullable_to_non_nullable
 as String?,currentFilter: null == currentFilter ? _self.currentFilter : currentFilter // ignore: cast_nullable_to_non_nullable
-as FilterEntity,
+as FilterEntity,filterDraft: null == filterDraft ? _self.filterDraft : filterDraft // ignore: cast_nullable_to_non_nullable
+as FilterEntity,selectedCity: freezed == selectedCity ? _self.selectedCity : selectedCity // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 /// Create a copy of HomeState
@@ -103,6 +105,15 @@ $FilterEntityCopyWith<$Res> get currentFilter {
   
   return $FilterEntityCopyWith<$Res>(_self.currentFilter, (value) {
     return _then(_self.copyWith(currentFilter: value));
+  });
+}/// Create a copy of HomeState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$FilterEntityCopyWith<$Res> get filterDraft {
+  
+  return $FilterEntityCopyWith<$Res>(_self.filterDraft, (value) {
+    return _then(_self.copyWith(filterDraft: value));
   });
 }
 }
@@ -186,10 +197,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Result<ProductPage> status,  Result<List<CategoryEntity>> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Result<ProductPage> status,  Result<List<CategoryEntity>> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter,  FilterEntity filterDraft,  String? selectedCity)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,_that.limit,_that.items,_that.categories,_that.isLoadingMore,_that.loadMoreError,_that.currentFilter);case _:
+return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,_that.limit,_that.items,_that.categories,_that.isLoadingMore,_that.loadMoreError,_that.currentFilter,_that.filterDraft,_that.selectedCity);case _:
   return orElse();
 
 }
@@ -207,10 +218,10 @@ return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Result<ProductPage> status,  Result<List<CategoryEntity>> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Result<ProductPage> status,  Result<List<CategoryEntity>> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter,  FilterEntity filterDraft,  String? selectedCity)  $default,) {final _that = this;
 switch (_that) {
 case _HomeState():
-return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,_that.limit,_that.items,_that.categories,_that.isLoadingMore,_that.loadMoreError,_that.currentFilter);case _:
+return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,_that.limit,_that.items,_that.categories,_that.isLoadingMore,_that.loadMoreError,_that.currentFilter,_that.filterDraft,_that.selectedCity);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -227,10 +238,10 @@ return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Result<ProductPage> status,  Result<List<CategoryEntity>> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Result<ProductPage> status,  Result<List<CategoryEntity>> categoriesStatus,  String searchTerm,  int page,  int limit,  List<ProductEntity> items,  List<CategoryEntity> categories,  bool isLoadingMore,  String? loadMoreError,  FilterEntity currentFilter,  FilterEntity filterDraft,  String? selectedCity)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,_that.limit,_that.items,_that.categories,_that.isLoadingMore,_that.loadMoreError,_that.currentFilter);case _:
+return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,_that.limit,_that.items,_that.categories,_that.isLoadingMore,_that.loadMoreError,_that.currentFilter,_that.filterDraft,_that.selectedCity);case _:
   return null;
 
 }
@@ -242,7 +253,7 @@ return $default(_that.status,_that.categoriesStatus,_that.searchTerm,_that.page,
 
 
 class _HomeState implements HomeState {
-  const _HomeState({this.status = const Result.empty(), this.categoriesStatus = const Result.empty(), this.searchTerm = '', this.page = 1, this.limit = 10, final  List<ProductEntity> items = const <ProductEntity>[], final  List<CategoryEntity> categories = const <CategoryEntity>[], this.isLoadingMore = false, this.loadMoreError, this.currentFilter = const FilterEntity()}): _items = items,_categories = categories;
+  const _HomeState({this.status = const Result.empty(), this.categoriesStatus = const Result.empty(), this.searchTerm = '', this.page = 1, this.limit = 10, final  List<ProductEntity> items = const <ProductEntity>[], final  List<CategoryEntity> categories = const <CategoryEntity>[], this.isLoadingMore = false, this.loadMoreError, this.currentFilter = const FilterEntity(), this.filterDraft = const FilterEntity(), this.selectedCity}): _items = items,_categories = categories;
   
 
 @override@JsonKey() final  Result<ProductPage> status;
@@ -267,6 +278,8 @@ class _HomeState implements HomeState {
 @override@JsonKey() final  bool isLoadingMore;
 @override final  String? loadMoreError;
 @override@JsonKey() final  FilterEntity currentFilter;
+@override@JsonKey() final  FilterEntity filterDraft;
+@override final  String? selectedCity;
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
@@ -278,16 +291,16 @@ _$HomeStateCopyWith<_HomeState> get copyWith => __$HomeStateCopyWithImpl<_HomeSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.status, status) || other.status == status)&&(identical(other.categoriesStatus, categoriesStatus) || other.categoriesStatus == categoriesStatus)&&(identical(other.searchTerm, searchTerm) || other.searchTerm == searchTerm)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&const DeepCollectionEquality().equals(other._items, _items)&&const DeepCollectionEquality().equals(other._categories, _categories)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.loadMoreError, loadMoreError) || other.loadMoreError == loadMoreError)&&(identical(other.currentFilter, currentFilter) || other.currentFilter == currentFilter));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.status, status) || other.status == status)&&(identical(other.categoriesStatus, categoriesStatus) || other.categoriesStatus == categoriesStatus)&&(identical(other.searchTerm, searchTerm) || other.searchTerm == searchTerm)&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&const DeepCollectionEquality().equals(other._items, _items)&&const DeepCollectionEquality().equals(other._categories, _categories)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.loadMoreError, loadMoreError) || other.loadMoreError == loadMoreError)&&(identical(other.currentFilter, currentFilter) || other.currentFilter == currentFilter)&&(identical(other.filterDraft, filterDraft) || other.filterDraft == filterDraft)&&(identical(other.selectedCity, selectedCity) || other.selectedCity == selectedCity));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,categoriesStatus,searchTerm,page,limit,const DeepCollectionEquality().hash(_items),const DeepCollectionEquality().hash(_categories),isLoadingMore,loadMoreError,currentFilter);
+int get hashCode => Object.hash(runtimeType,status,categoriesStatus,searchTerm,page,limit,const DeepCollectionEquality().hash(_items),const DeepCollectionEquality().hash(_categories),isLoadingMore,loadMoreError,currentFilter,filterDraft,selectedCity);
 
 @override
 String toString() {
-  return 'HomeState(status: $status, categoriesStatus: $categoriesStatus, searchTerm: $searchTerm, page: $page, limit: $limit, items: $items, categories: $categories, isLoadingMore: $isLoadingMore, loadMoreError: $loadMoreError, currentFilter: $currentFilter)';
+  return 'HomeState(status: $status, categoriesStatus: $categoriesStatus, searchTerm: $searchTerm, page: $page, limit: $limit, items: $items, categories: $categories, isLoadingMore: $isLoadingMore, loadMoreError: $loadMoreError, currentFilter: $currentFilter, filterDraft: $filterDraft, selectedCity: $selectedCity)';
 }
 
 
@@ -298,11 +311,11 @@ abstract mixin class _$HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Re
   factory _$HomeStateCopyWith(_HomeState value, $Res Function(_HomeState) _then) = __$HomeStateCopyWithImpl;
 @override @useResult
 $Res call({
- Result<ProductPage> status, Result<List<CategoryEntity>> categoriesStatus, String searchTerm, int page, int limit, List<ProductEntity> items, List<CategoryEntity> categories, bool isLoadingMore, String? loadMoreError, FilterEntity currentFilter
+ Result<ProductPage> status, Result<List<CategoryEntity>> categoriesStatus, String searchTerm, int page, int limit, List<ProductEntity> items, List<CategoryEntity> categories, bool isLoadingMore, String? loadMoreError, FilterEntity currentFilter, FilterEntity filterDraft, String? selectedCity
 });
 
 
-@override $ResultCopyWith<ProductPage, $Res> get status;@override $ResultCopyWith<List<CategoryEntity>, $Res> get categoriesStatus;@override $FilterEntityCopyWith<$Res> get currentFilter;
+@override $ResultCopyWith<ProductPage, $Res> get status;@override $ResultCopyWith<List<CategoryEntity>, $Res> get categoriesStatus;@override $FilterEntityCopyWith<$Res> get currentFilter;@override $FilterEntityCopyWith<$Res> get filterDraft;
 
 }
 /// @nodoc
@@ -315,7 +328,7 @@ class __$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? categoriesStatus = null,Object? searchTerm = null,Object? page = null,Object? limit = null,Object? items = null,Object? categories = null,Object? isLoadingMore = null,Object? loadMoreError = freezed,Object? currentFilter = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? categoriesStatus = null,Object? searchTerm = null,Object? page = null,Object? limit = null,Object? items = null,Object? categories = null,Object? isLoadingMore = null,Object? loadMoreError = freezed,Object? currentFilter = null,Object? filterDraft = null,Object? selectedCity = freezed,}) {
   return _then(_HomeState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as Result<ProductPage>,categoriesStatus: null == categoriesStatus ? _self.categoriesStatus : categoriesStatus // ignore: cast_nullable_to_non_nullable
@@ -327,7 +340,9 @@ as List<ProductEntity>,categories: null == categories ? _self._categories : cate
 as List<CategoryEntity>,isLoadingMore: null == isLoadingMore ? _self.isLoadingMore : isLoadingMore // ignore: cast_nullable_to_non_nullable
 as bool,loadMoreError: freezed == loadMoreError ? _self.loadMoreError : loadMoreError // ignore: cast_nullable_to_non_nullable
 as String?,currentFilter: null == currentFilter ? _self.currentFilter : currentFilter // ignore: cast_nullable_to_non_nullable
-as FilterEntity,
+as FilterEntity,filterDraft: null == filterDraft ? _self.filterDraft : filterDraft // ignore: cast_nullable_to_non_nullable
+as FilterEntity,selectedCity: freezed == selectedCity ? _self.selectedCity : selectedCity // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -357,6 +372,15 @@ $FilterEntityCopyWith<$Res> get currentFilter {
   
   return $FilterEntityCopyWith<$Res>(_self.currentFilter, (value) {
     return _then(_self.copyWith(currentFilter: value));
+  });
+}/// Create a copy of HomeState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$FilterEntityCopyWith<$Res> get filterDraft {
+  
+  return $FilterEntityCopyWith<$Res>(_self.filterDraft, (value) {
+    return _then(_self.copyWith(filterDraft: value));
   });
 }
 }

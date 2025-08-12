@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:property_sales/core/models/result.dart';
-import 'package:property_sales/features/home/domain/entites/product_entity.dart';
 import 'package:property_sales/features/home/domain/entites/category_entity.dart';
 import 'package:property_sales/features/home/domain/entites/filter_entity.dart';
+import 'package:property_sales/features/home/domain/entites/product_entity.dart';
 
 part 'home_state.freezed.dart';
 
@@ -19,5 +19,7 @@ abstract class HomeState with _$HomeState {
     @Default(false) bool isLoadingMore,
     String? loadMoreError,
     @Default(FilterEntity()) FilterEntity currentFilter,
+    @Default(FilterEntity()) FilterEntity filterDraft,
+    String? selectedCity,
   }) = _HomeState;
 }
