@@ -19,8 +19,8 @@ class LoginUseCase implements UseCase<LoginEntity, LoginParams> {
         await DioFactory.updateToken(data.token);
         return Result.success(data: data);
       },
-      failure: (error, stackTrace, msg) =>
-          Result.failure(error: error, errorMessage: msg),
+      failure: (error, _, errorMessage) =>
+          Result.failure(error: error, errorMessage: errorMessage),
       loading: () => const Result.loading(),
       empty: () => const Result.empty(),
     );

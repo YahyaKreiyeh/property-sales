@@ -3,7 +3,6 @@ import 'package:property_sales/features/home/data/models/product_dto.dart';
 import 'package:property_sales/features/home/data/services/products_service.dart';
 import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart'
     show SearchProductsParams;
-import 'package:retrofit/retrofit.dart';
 
 abstract class ProductsRemoteDataSource {
   Future<ProductPageDto> search(SearchProductsParams params);
@@ -15,23 +14,21 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
 
   @override
   Future<ProductPageDto> search(SearchProductsParams params) async {
-    final HttpResponse<ProductPageDto> res = await _service.searchProducts(
-      websiteType: 0,
-      searchTerm: params.searchTerm,
-      page: params.page,
-      limit: params.limit,
-    );
+    try {
+      final dto = await _service.searchProducts(
+        websiteType: 0,
+        searchTerm: params.searchTerm,
+        page: params.page,
+        limit: params.limit,
+      );
 
-    final code = res.response.statusCode ?? 500;
-    if (code >= 200 && code < 300) {
-      return res.data;
+      return dto.copyWith(
+        length: dto.length ?? dto.data.length,
+        totalPages: dto.totalPages ?? 0,
+        message: dto.message ?? (dto.data.isEmpty ? 'No products found' : ''),
+      );
+    } on DioException {
+      rethrow;
     }
-
-    throw DioException(
-      requestOptions: res.response.requestOptions,
-      response: res.response,
-      error: 'Unsuccessful status code: $code',
-      type: DioExceptionType.badResponse,
-    );
   }
 }

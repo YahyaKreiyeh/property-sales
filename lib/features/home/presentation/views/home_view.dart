@@ -316,8 +316,6 @@ class _ProductCard extends StatelessWidget {
 }
 
 class _HomeBlocListener extends StatelessWidget {
-  const _HomeBlocListener();
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<HomeCubit, HomeState>(
@@ -325,10 +323,10 @@ class _HomeBlocListener extends StatelessWidget {
       listener: (context, state) {
         state.status.when(
           success: (_) {},
-          failure: (error, _, msg) {
+          failure: (error, _, errorMessage) {
             context.read<SnackbarBloc>().add(
               AddSnackbarEvent(
-                message: msg ?? 'Something went wrong',
+                message: errorMessage ?? 'Something went wrong',
                 type: SnackbarType.error,
               ),
             );

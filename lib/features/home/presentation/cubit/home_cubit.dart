@@ -49,8 +49,8 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
 
     if (id != _reqId) return;
 
-    result.map(
-      empty: (_) => safeEmit(
+    result.when(
+      empty: () => safeEmit(
         state.copyWith(
           status: Result.success(
             data: const ProductPage(
@@ -64,17 +64,17 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
           items: const [],
         ),
       ),
-      loading: (_) {},
-      success: (s) => safeEmit(
+      loading: () {},
+      success: (data) => safeEmit(
         state.copyWith(
-          status: Result.success(data: s.data),
+          status: Result.success(data: data),
           page: 1,
-          items: s.data.data,
+          items: data.data,
         ),
       ),
-      failure: (f) => safeEmit(
+      failure: (error, _, errorMessage) => safeEmit(
         state.copyWith(
-          status: Result.failure(error: f.error, errorMessage: f.errorMessage),
+          status: Result.failure(error: error, errorMessage: errorMessage),
           page: 1,
           items: const [],
         ),
@@ -88,7 +88,7 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
     final totalPages = state.status.successValue?.totalPages ?? 0;
     if (totalPages == 0 || state.page >= totalPages) return;
 
-    safeEmit(state.copyWith(isLoadingMore: true));
+    safeEmit(state.copyWith(isLoadingMore: true, loadMoreError: null));
 
     final nextPage = state.page + 1;
     final result = await _repo.search(
@@ -99,24 +99,25 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
       ),
     );
 
-    result.map(
-      empty: (_) => safeEmit(state.copyWith(isLoadingMore: false)),
-      loading: (_) {},
-      success: (s) {
-        final merged = [...state.items, ...s.data.data];
+    result.when(
+      empty: () => safeEmit(state.copyWith(isLoadingMore: false)),
+      loading: () {},
+      success: (data) {
+        final merged = [...state.items, ...data.data];
         safeEmit(
           state.copyWith(
-            status: Result.success(data: s.data),
+            status: Result.success(data: data),
             items: merged,
             page: nextPage,
             isLoadingMore: false,
+            loadMoreError: null,
           ),
         );
       },
-      failure: (f) => safeEmit(
+      failure: (error, _, errorMessage) => safeEmit(
         state.copyWith(
           isLoadingMore: false,
-          loadMoreError: f.errorMessage ?? 'Failed to load more products',
+          loadMoreError: errorMessage ?? 'Failed to load more products',
         ),
       ),
     );

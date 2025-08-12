@@ -113,10 +113,10 @@ class _LoginBlocListener extends StatelessWidget {
             );
             context.pushNamed(Routes.home);
           },
-          failure: (_, _, msg) {
+          failure: (_, _, errorMessage) {
             context.read<SnackbarBloc>().add(
               AddSnackbarEvent(
-                message: msg ?? 'Login failed',
+                message: errorMessage ?? 'Login failed',
                 type: SnackbarType.error,
               ),
             );
@@ -125,7 +125,6 @@ class _LoginBlocListener extends StatelessWidget {
           empty: () {},
         );
       },
-
       child: const SizedBox.shrink(),
     );
   }

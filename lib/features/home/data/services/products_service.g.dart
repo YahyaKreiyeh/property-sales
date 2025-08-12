@@ -20,7 +20,7 @@ class _ProductsService implements ProductsService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<HttpResponse<ProductPageDto>> searchProducts({
+  Future<ProductPageDto> searchProducts({
     int websiteType = 0,
     required String searchTerm,
     required int page,
@@ -35,7 +35,7 @@ class _ProductsService implements ProductsService {
     };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<HttpResponse<ProductPageDto>>(
+    final _options = _setStreamType<ProductPageDto>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -53,8 +53,7 @@ class _ProductsService implements ProductsService {
       errorLogger?.logError(e, s, _options);
       rethrow;
     }
-    final httpResponse = HttpResponse(_value, _result);
-    return httpResponse;
+    return _value;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

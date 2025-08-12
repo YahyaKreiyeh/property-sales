@@ -8,8 +8,9 @@ part 'products_service.g.dart';
 @RestApi(baseUrl: ApiConstants.apiBaseUrl)
 abstract class ProductsService {
   factory ProductsService(Dio dio) = _ProductsService;
+
   @GET(ApiConstants.products)
-  Future<HttpResponse<ProductPageDto>> searchProducts({
+  Future<ProductPageDto> searchProducts({
     @Query('website_type') int websiteType = 0,
     @Query('search_term') required String searchTerm,
     @Query('page') required int page,
