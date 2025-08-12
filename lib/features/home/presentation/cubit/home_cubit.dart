@@ -1,100 +1,86 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:property_sales/core/mixins/cubit_mixin.dart';
 import 'package:property_sales/core/models/result.dart';
 import 'package:property_sales/features/home/domain/entites/product_entity.dart';
 import 'package:property_sales/features/home/domain/repositories/products_repository.dart';
 
 import 'home_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
+class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
   final ProductsRepository _repo;
+  Timer? _debounce;
+  int _reqId = 0;
 
   HomeCubit(this._repo) : super(const HomeState()) {
-    fetchInitial();
+    search(term: '');
   }
 
-  void searchChanged(String term) => emit(state.copyWith(searchTerm: term));
+  @override
+  Future<void> close() {
+    _debounce?.cancel();
+    return super.close();
+  }
 
-  Future<void> fetchInitial() async {
-    emit(state.copyWith(status: const Result.loading(), page: 1));
-    final res = await _repo.search(searchTerm: '', page: 1, limit: state.limit);
+  void searchChanged(String term) {
+    safeEmit(state.copyWith(searchTerm: term, totalLength: 0));
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      search();
+    });
+  }
 
-    res.when(
-      success: (pageData) {
-        emit(
-          state.copyWith(
-            status: const Result.success(data: []),
-            items: pageData.data,
-            page: 1,
-            totalPages: pageData.totalPages,
-            totalLength: pageData.length,
-            errorMessage: null,
-          ),
-        );
-      },
-      empty: () {
-        emit(
-          state.copyWith(
-            status: const Result.success(data: []),
-            items: const [],
-            page: 1,
-            totalPages: 0,
-            totalLength: 0,
-          ),
-        );
-      },
-      failure: (err, _, msg) {
-        emit(
-          state.copyWith(
-            status: Result.failure(error: err, errorMessage: msg),
-            errorMessage: msg ?? 'Failed to load products',
-          ),
-        );
-      },
-      loading: () {},
+  Future<void> search({String? term}) async {
+    final q = (term ?? state.searchTerm).trim();
+    final id = ++_reqId;
+
+    safeEmit(
+      state.copyWith(
+        searchTerm: term ?? state.searchTerm,
+        status: const Result.loading(),
+        page: 1,
+        items: const [],
+        totalPages: 0,
+        totalLength: 0,
+      ),
     );
-  }
 
-  Future<void> submitSearch() async {
-    final q = state.searchTerm.trim();
-    if (q.isEmpty) {
-      return fetchInitial();
-    }
-
-    emit(state.copyWith(status: const Result.loading(), page: 1));
     final res = await _repo.search(searchTerm: q, page: 1, limit: state.limit);
+    if (id != _reqId) return;
 
     res.when(
-      success: (pageData) {
-        emit(
-          state.copyWith(
-            status: const Result.success(data: []),
-            items: pageData.data,
-            page: 1,
-            totalPages: pageData.totalPages,
-            totalLength: pageData.length,
-            errorMessage: null,
-          ),
-        );
-      },
-      empty: () {
-        emit(
-          state.copyWith(
-            status: const Result.success(data: []),
-            items: const [],
-            page: 1,
-            totalPages: 0,
-            totalLength: 0,
-          ),
-        );
-      },
-      failure: (err, _, msg) {
-        emit(
-          state.copyWith(
-            status: Result.failure(error: err, errorMessage: msg),
-            errorMessage: msg ?? 'Failed to search',
-          ),
-        );
-      },
+      success: (pageData) => safeEmit(
+        state.copyWith(
+          status: const Result.success(data: []),
+          items: pageData.data,
+          page: 1,
+          totalPages: pageData.totalPages,
+          totalLength: pageData.length,
+          errorMessage: null,
+        ),
+      ),
+      empty: () => safeEmit(
+        state.copyWith(
+          status: const Result.success(data: []),
+          items: const [],
+          page: 1,
+          totalPages: 0,
+          totalLength: 0,
+        ),
+      ),
+      failure: (err, _, msg) => safeEmit(
+        state.copyWith(
+          status: Result.failure(error: err, errorMessage: msg),
+          items: const [],
+          page: 1,
+          totalPages: 0,
+          totalLength: 0,
+          errorMessage:
+              msg ??
+              (q.isEmpty ? 'Failed to load products' : 'Failed to search'),
+        ),
+      ),
       loading: () {},
     );
   }
@@ -103,7 +89,7 @@ class HomeCubit extends Cubit<HomeState> {
     if (state.isLoadingMore) return;
     if (state.page >= state.totalPages) return;
 
-    emit(state.copyWith(isLoadingMore: true));
+    safeEmit(state.copyWith(isLoadingMore: true));
     final next = state.page + 1;
 
     final res = await _repo.search(
@@ -116,7 +102,7 @@ class HomeCubit extends Cubit<HomeState> {
       success: (pageData) {
         final merged = List<ProductEntity>.from(state.items)
           ..addAll(pageData.data);
-        emit(
+        safeEmit(
           state.copyWith(
             items: merged,
             page: next,
@@ -126,9 +112,9 @@ class HomeCubit extends Cubit<HomeState> {
           ),
         );
       },
-      empty: () => emit(state.copyWith(isLoadingMore: false)),
+      empty: () => safeEmit(state.copyWith(isLoadingMore: false)),
       failure: (err, _, msg) =>
-          emit(state.copyWith(isLoadingMore: false, errorMessage: msg)),
+          safeEmit(state.copyWith(isLoadingMore: false, errorMessage: msg)),
       loading: () {},
     );
   }

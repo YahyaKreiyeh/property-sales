@@ -172,7 +172,6 @@ class _SearchBox extends StatelessWidget {
           hintText: 'Search',
           textStyle: TextStyles.primaryText60017,
           onChanged: cubit.searchChanged,
-          onEditingComplete: cubit.submitSearch,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
           suffixIcon: const Icon(Icons.search, color: AppColors.primary),
         ),
