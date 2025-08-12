@@ -2,6 +2,7 @@ class ApiConstants {
   static const String apiBaseUrl = 'https://back.syriasales.com';
 
   static const String products = '/search/products';
+  static const String categories = '/categories/main';
 }
 
 class ApiErrors {

@@ -13,6 +13,7 @@ import 'package:property_sales/core/widgets/text_fields/custom_text_field.dart';
 import 'package:property_sales/features/home/domain/entites/product_entity.dart';
 import 'package:property_sales/features/home/presentation/cubit/home_cubit.dart';
 import 'package:property_sales/features/home/presentation/cubit/home_state.dart';
+import 'package:property_sales/features/home/presentation/widgets/filter_bottom_sheet.dart';
 import 'package:property_sales/features/snackbar/bloc/snackbar_bloc.dart';
 
 class HomeView extends StatelessWidget {
@@ -97,7 +98,7 @@ class _ProductsList extends StatelessWidget {
         actionLabel: 'Retry',
         onAction: () => cubit.search(),
       );
-    } else if (vm.items.isEmpty && vm.searchTerm.isNotEmpty) {
+    } else if (vm.items.isEmpty) {
       child = _ErrorRetry(
         icon: Icons.search_off,
         message: (vm.backendMessage?.isNotEmpty ?? false)
@@ -152,11 +153,16 @@ class _ProductsList extends StatelessWidget {
 class _ResultsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final total = context.select(
-      (HomeCubit c) => c.state.status.successValue?.length ?? 0,
+    final cubit = context.read<HomeCubit>();
+    final vm = context.select(
+      (HomeCubit c) => (
+        total: c.state.status.successValue?.length ?? 0,
+        searchTerm: c.state.searchTerm,
+        categories: c.state.categories,
+        currentFilter: c.state.currentFilter,
+      ),
     );
 
-    final searchTerm = context.select((HomeCubit c) => c.state.searchTerm);
     return Column(
       children: [
         Row(
@@ -167,23 +173,59 @@ class _ResultsHeader extends StatelessWidget {
                   style: TextStyles.primaryText40020,
                   children: [
                     TextSpan(
-                      text: 'Results${searchTerm.isNotEmpty ? ' for ' : ''}',
+                      text: 'Results${vm.searchTerm.isNotEmpty ? ' for ' : ''}',
                     ),
-                    if (searchTerm.isNotEmpty)
+                    if (vm.searchTerm.isNotEmpty)
                       TextSpan(
-                        text: searchTerm,
+                        text: vm.searchTerm,
                         style: TextStyles.primaryText60020,
                       ),
-                    TextSpan(text: ' ($total)'),
+                    TextSpan(text: ' (${vm.total})'),
                   ],
                 ),
               ),
             ),
-            Icon(Icons.filter_alt_outlined, color: AppColors.primary),
+            GestureDetector(
+              onTap: () => _showFilterBottomSheet(
+                context,
+                cubit,
+                vm.categories,
+                vm.currentFilter,
+              ),
+              child: Icon(Icons.filter_alt_outlined, color: AppColors.primary),
+            ),
           ],
         ),
         const VerticalSpace(16),
       ],
+    );
+  }
+
+  void _showFilterBottomSheet(
+    BuildContext context,
+    HomeCubit cubit,
+    categories,
+    currentFilter,
+  ) {
+    cubit.loadCategoriesIfNeeded();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+        ),
+        child: BlocProvider.value(
+          value: cubit,
+          child: FilterBottomSheet(
+            categories: categories,
+            currentFilter: currentFilter,
+            onApplyFilter: cubit.applyFilter,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -302,7 +344,7 @@ class _ProductCard extends StatelessWidget {
               ),
               const VerticalSpace(4),
               Text(
-                'More than 6 bedrooms · 2 Bathroom · 120 m2',
+                item.name,
                 style: TextStyles.greyText40015,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

@@ -20,19 +20,10 @@ class _ProductsService implements ProductsService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<ProductPageDto> searchProducts({
-    int websiteType = 0,
-    required String searchTerm,
-    required int page,
-    int limit = 10,
-  }) async {
+  Future<ProductPageDto> searchProducts(Map<String, dynamic> queries) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'website_type': websiteType,
-      r'search_term': searchTerm,
-      r'page': page,
-      r'limit': limit,
-    };
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(queries);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ProductPageDto>(
@@ -49,6 +40,33 @@ class _ProductsService implements ProductsService {
     late ProductPageDto _value;
     try {
       _value = ProductPageDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<CategoriesResponse> getCategories() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<CategoriesResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/categories/main',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late CategoriesResponse _value;
+    try {
+      _value = CategoriesResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

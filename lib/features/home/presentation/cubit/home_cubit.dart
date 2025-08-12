@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:property_sales/core/mixins/cubit_mixin.dart';
 import 'package:property_sales/core/models/result.dart';
+import 'package:property_sales/features/home/domain/entites/filter_entity.dart';
 import 'package:property_sales/features/home/domain/entites/product_entity.dart';
 import 'package:property_sales/features/home/domain/repositories/products_repository.dart';
 import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart';
@@ -24,15 +25,68 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
     return super.close();
   }
 
+  Future<void> loadCategoriesIfNeeded() async {
+    if (state.categories.isNotEmpty || state.categoriesStatus.isLoading) {
+      return;
+    }
+
+    await _loadCategories();
+  }
+
+  Future<void> retryLoadCategories() async {
+    await _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    safeEmit(state.copyWith(categoriesStatus: const Result.loading()));
+
+    final result = await _repo.getCategories();
+
+    result.when(
+      empty: () => safeEmit(
+        state.copyWith(
+          categoriesStatus: const Result.success(data: []),
+          categories: const [],
+        ),
+      ),
+      loading: () {},
+      success: (categories) => safeEmit(
+        state.copyWith(
+          categoriesStatus: Result.success(data: categories),
+          categories: categories,
+        ),
+      ),
+      failure: (error, _, errorMessage) => safeEmit(
+        state.copyWith(
+          categoriesStatus: Result.failure(
+            error: error,
+            errorMessage: errorMessage,
+          ),
+        ),
+      ),
+    );
+  }
+
   void searchChanged(String term) {
-    safeEmit(state.copyWith(searchTerm: term));
+    final updatedFilter = state.currentFilter.copyWith(searchTerm: term);
+    safeEmit(state.copyWith(searchTerm: term, currentFilter: updatedFilter));
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () => search());
+  }
+
+  void applyFilter(FilterEntity filter) {
+    safeEmit(state.copyWith(currentFilter: filter));
+    search();
   }
 
   Future<void> search({String? term}) async {
     final searchTerm = (term ?? state.searchTerm).trim();
     final id = ++_reqId;
+
+    final updatedFilter = state.currentFilter.copyWith(
+      searchTerm: searchTerm,
+      page: 1,
+    );
 
     safeEmit(
       state.copyWith(
@@ -40,11 +94,20 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
         status: const Result.loading(),
         page: 1,
         items: const [],
+        currentFilter: updatedFilter,
       ),
     );
 
     final result = await _repo.search(
-      SearchProductsParams(searchTerm: searchTerm, page: 1, limit: state.limit),
+      SearchProductsParams(
+        searchTerm: searchTerm,
+        page: 1,
+        limit: state.limit,
+        minPrice: updatedFilter.minPrice,
+        maxPrice: updatedFilter.maxPrice,
+        categoryIds: updatedFilter.categoryIds,
+        cityId: updatedFilter.cityId,
+      ),
     );
 
     if (id != _reqId) return;
@@ -96,6 +159,10 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
         searchTerm: state.searchTerm.trim(),
         page: nextPage,
         limit: state.limit,
+        minPrice: state.currentFilter.minPrice,
+        maxPrice: state.currentFilter.maxPrice,
+        categoryIds: state.currentFilter.categoryIds,
+        cityId: state.currentFilter.cityId,
       ),
     );
 
