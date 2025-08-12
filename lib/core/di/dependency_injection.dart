@@ -9,6 +9,9 @@ import 'package:property_sales/features/home/data/services/favorite_service.dart
 import 'package:property_sales/features/home/data/services/products_service.dart';
 import 'package:property_sales/features/home/domain/repositories/favorite_repository.dart';
 import 'package:property_sales/features/home/domain/repositories/products_repository.dart';
+import 'package:property_sales/features/home/domain/usecases/add_to_favorite_usecase.dart';
+import 'package:property_sales/features/home/domain/usecases/get_categories_usecase.dart';
+import 'package:property_sales/features/home/domain/usecases/remove_from_favorite_usecase.dart';
 import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart';
 import 'package:property_sales/features/home/presentation/cubit/home_cubit.dart';
 import 'package:property_sales/features/login/data/data_sources/auth_local_data_source.dart';
@@ -48,7 +51,18 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<SearchProductsUseCase>(
     () => SearchProductsUseCase(getIt()),
   );
-  getIt.registerFactory<HomeCubit>(() => HomeCubit(getIt(), getIt()));
+  getIt.registerLazySingleton<GetCategoriesUseCase>(
+    () => GetCategoriesUseCase(getIt()),
+  );
+  getIt.registerLazySingleton<AddToFavoriteUseCase>(
+    () => AddToFavoriteUseCase(getIt()),
+  );
+  getIt.registerLazySingleton<RemoveFromFavoriteUseCase>(
+    () => RemoveFromFavoriteUseCase(getIt()),
+  );
+  getIt.registerFactory<HomeCubit>(
+    () => HomeCubit(getIt(), getIt(), getIt(), getIt()),
+  );
 
   // Favorites
   getIt.registerLazySingleton<FavoriteService>(() => FavoriteService(getIt()));

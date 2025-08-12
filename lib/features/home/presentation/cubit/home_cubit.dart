@@ -5,19 +5,28 @@ import 'package:property_sales/core/mixins/cubit_mixin.dart';
 import 'package:property_sales/core/models/result.dart';
 import 'package:property_sales/features/home/domain/entites/filter_entity.dart';
 import 'package:property_sales/features/home/domain/entites/product_entity.dart';
-import 'package:property_sales/features/home/domain/repositories/favorite_repository.dart';
-import 'package:property_sales/features/home/domain/repositories/products_repository.dart';
+import 'package:property_sales/features/home/domain/usecases/add_to_favorite_usecase.dart';
+import 'package:property_sales/features/home/domain/usecases/get_categories_usecase.dart';
+import 'package:property_sales/features/home/domain/usecases/remove_from_favorite_usecase.dart';
 import 'package:property_sales/features/home/domain/usecases/search_products_usecase.dart';
 
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
-  final ProductsRepository _repo;
-  final FavoriteRepository _favoriteRepo;
+  final SearchProductsUseCase _searchProducts;
+  final GetCategoriesUseCase _getCategories;
+  final AddToFavoriteUseCase _addToFavorite;
+  final RemoveFromFavoriteUseCase _removeFromFavorite;
+
   Timer? _debounce;
   int _reqId = 0;
 
-  HomeCubit(this._repo, this._favoriteRepo) : super(const HomeState()) {
+  HomeCubit(
+    this._searchProducts,
+    this._getCategories,
+    this._addToFavorite,
+    this._removeFromFavorite,
+  ) : super(const HomeState()) {
     search(term: '');
   }
 
@@ -31,7 +40,6 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
     if (state.categories.isNotEmpty || state.categoriesStatus.isLoading) {
       return;
     }
-
     await _loadCategories();
   }
 
@@ -42,7 +50,7 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
   Future<void> _loadCategories() async {
     safeEmit(state.copyWith(categoriesStatus: const Result.loading()));
 
-    final result = await _repo.getCategories();
+    final result = await _getCategories();
 
     result.when(
       empty: () => safeEmit(
@@ -150,8 +158,8 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
     safeEmit(state.copyWith(items: updatedItems));
 
     final result = product.isFavorite
-        ? await _favoriteRepo.removeFromFavorite(productId)
-        : await _favoriteRepo.addToFavorite(productId);
+        ? await _removeFromFavorite(productId)
+        : await _addToFavorite(productId);
 
     result.when(
       success: (favoriteResult) {
@@ -190,7 +198,7 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
       ),
     );
 
-    final result = await _repo.search(
+    final result = await _searchProducts(
       SearchProductsParams(
         searchTerm: searchTerm,
         page: 1,
@@ -246,7 +254,7 @@ class HomeCubit extends Cubit<HomeState> with SafeEmitter<HomeState> {
     safeEmit(state.copyWith(isLoadingMore: true, loadMoreError: null));
 
     final nextPage = state.page + 1;
-    final result = await _repo.search(
+    final result = await _searchProducts(
       SearchProductsParams(
         searchTerm: state.searchTerm.trim(),
         page: nextPage,

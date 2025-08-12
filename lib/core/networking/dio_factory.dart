@@ -31,7 +31,6 @@ class DioFactory {
       isLoggedInUser = true;
       _dio?.options.headers['Authorization'] = token;
     }
-    // SharedPrefHelper.clearAllSecuredData();
   }
 
   static void _addDioInterceptor() {
